@@ -1,0 +1,27 @@
+<html>
+<head>
+  <link rel="stylesheet" href="stylesheet/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.js" integrity="sha512-q7T9VUu0gBgAGV3YkcvI0wjeBJONO5Cg/+688NkDC6qupjUvEG9ZmNK4GjZWvWuuT1VIjS0abwE1IKXVew8Ohw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <title>DND - MapGenerator</title>
+</head>
+<body>
+
+<div class="parent">
+  <div class="div1">
+      <div class="img_cont">
+        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="images/house1.png">
+        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="images/house2.png">
+        <img class="img" id="ele3" draggable="true" ondragstart="dragElement(event)" src="images/house3.png">
+      </div>
+      <button onclick="togglePen(modes.draw)">Toggle pen</button>
+  </div>
+  <div class="div2" ondragover="allowDrop(event)" ondrop="dropElement(event)">
+    <canvas id="canvas" width="500" height="500"></canvas>
+  </div>
+  <div class="div3">
+    <button onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
+  </div>
+</div>
+<script src="sketch.js"></script>
+</body>
+</html>
