@@ -19,6 +19,7 @@
 .img{
     width: 150px;
     height: 100px;
+    scale: 75%;
 }
 #div2{
     align-items: center;
