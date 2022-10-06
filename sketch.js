@@ -9,6 +9,53 @@ const modes = {
   draw: 'draw',
 }
 
+const openNav = () => {
+  document.getElementById("leftSidebar").style.width = "250px";
+  document.getElementById("parent").style.marginLeft = "250px";
+}
+const closeNav = () => {
+  document.getElementById("leftSidebar").style.width = "0";
+  document.getElementById("parent").style.marginLeft= "0";
+}
+
+const selectedObject = {
+  house : 'house',
+  nature : 'nature',
+  barriers : 'barriers',
+  cityObject : 'cityObject',
+  otherBuilding : 'otherBuilding',
+  other: 'other'
+}
+
+const changeSelectableCategory = (object) => {
+  if(object === selectedObject.house){
+    var house = document.getElementById("imgHouse");
+    closeNav();
+    if(house.style.display === "none") {
+      house.style.display = "block";
+    } else {
+      house.style.display = "none";
+    }
+
+  } else if(object === selectedObject.nature){
+    var nature = document.getElementById("imgNature");
+    closeNav();
+
+  } else if(object === selectedObject.barriers){
+    closeNav();
+
+
+  } else if(object === selectedObject.cityObject){
+    closeNav();
+
+  } else if(object === selectedObject.otherBuilding){
+    closeNav();
+
+  } else if(object === selectedObject.other){
+    closeNav();
+
+  }
+}
 
 const togglePen = (mode) => {
   if(mode === modes.draw){
