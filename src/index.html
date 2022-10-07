@@ -1,6 +1,6 @@
 <html>
 <head>
-  <link rel="stylesheet" href="stylesheet/style.css">
+  <link rel="stylesheet" href="../stylesheet/style.css">
   <meta charset="utf-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.js" integrity="sha512-q7T9VUu0gBgAGV3YkcvI0wjeBJONO5Cg/+688NkDC6qupjUvEG9ZmNK4GjZWvWuuT1VIjS0abwE1IKXVew8Ohw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <title>DND - MapGenerator</title>
@@ -8,6 +8,7 @@
 <body>
 
 <div class="parent">
+
   <div class="div1">
     <button class="buttonDesgin" onclick="openNav()">☰ Open Objects</button>
     <div class="sidebar" id="leftSidebar">
@@ -19,10 +20,8 @@
       <a href="#" onclick="changeSelectableCategory(selectedObject.otherBuilding)">Other Buildings</a>
       <a href="#" onclick="changeSelectableCategory(selectedObject.other)">etc.</a>
     </div>
-
-
-      <div class="img_cont">
-        <div class="imgHouse">
+    <div class="img_cont">
+        <div id="imgFiller">
         <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_1.png">
         <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_2.png">
         <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_3.png">
@@ -38,6 +37,6 @@
     <button class="buttonDesgin" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
   </div>
 </div>
-<script src="sketch.js"></script>
+<script src="/sketch.js"></script>
 </body>
 </html>

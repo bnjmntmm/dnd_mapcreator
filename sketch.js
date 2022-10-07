@@ -29,29 +29,29 @@ const selectedObject = {
 
 const changeSelectableCategory = (object) => {
   if(object === selectedObject.house){
-    var house = document.getElementById("imgHouse");
+    generateImage(selectedObject.house);
     closeNav();
-    if(house.style.display === "none") {
-      house.style.display = "block";
-    } else {
-      house.style.display = "none";
-    }
 
   } else if(object === selectedObject.nature){
-    var nature = document.getElementById("imgNature");
+    generateImage(selectedObject.nature);
     closeNav();
 
+
   } else if(object === selectedObject.barriers){
+    generateImage(selectedObject.barriers);
     closeNav();
 
 
   } else if(object === selectedObject.cityObject){
+    generateImage(selectedObject.cityObject);
     closeNav();
 
   } else if(object === selectedObject.otherBuilding){
+    generateImage(selectedObject.otherBuilding);
     closeNav();
 
   } else if(object === selectedObject.other){
+    generateImage(selectedObject.other);
     closeNav();
 
   }
@@ -109,4 +109,47 @@ const setEvent = (canvas) => {
   });
 }
 
+var imgArrayNature = [
+  {
+    img : '/assets/nature/tree1.png',id: "ele1", alt: 'Tree image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/tree2.png',id: "ele2", alt: 'Tree2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  }
+]
+var imgArrayBuildings = [
+  {
+    img : '/assets/buildings/House_1.png',id: "ele1", alt: 'House image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/buildings/House_2.png',id: "ele2", alt: 'House2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/buildings/House_3.png',id: "ele3", alt: 'House3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/buildings/Shop_1.png',id: "ele4", alt: 'Shop image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  }
+]
+let generateImage = (obj) => {
+  let htmlOutput = "";
+  var div = document.getElementById('imgFiller');
+  if(obj === selectedObject.nature){
+    for(var i = 0; i < imgArrayNature.length; i++){
+      var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
+      htmlOutput += imageElement.replace("#SRC", imgArrayNature[i].img).replace("#ALT", imgArrayNature[i].alt).replace("#ID", imgArrayNature[i].id).replace("#CLASS", imgArrayNature[i].class).replace("#DRAGGABLE", imgArrayNature[i].draggable).replace("#ONDRAGSTART", imgArrayNature[i].ondragstart);
+    }
+    div.innerHTML = htmlOutput;
+  } else if(obj === selectedObject.house){
+    for(var i = 0; i < imgArrayBuildings.length; i++){
+      var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
+      htmlOutput += imageElement.replace("#SRC", imgArrayBuildings[i].img).replace("#ALT", imgArrayBuildings[i].alt).replace("#ID", imgArrayBuildings[i].id).replace("#CLASS", imgArrayBuildings[i].class).replace("#DRAGGABLE", imgArrayBuildings[i].draggable).replace("#ONDRAGSTART", imgArrayBuildings[i].ondragstart);
+    }
+    div.innerHTML = htmlOutput;
+  }
+}
+
+
 setEvent(canvas);
+
+
