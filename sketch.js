@@ -1,9 +1,14 @@
 var canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#fff',
-  selection: false
+  selection: false,
+  stroke: 'green',
+  strokeWidth: 50
 });
 let mousePressed = false;
 let currentMode;
+let lastPosX;
+let lastPosY;
+let panning;
 
 const modes = {
   draw: 'draw',
@@ -26,6 +31,7 @@ const selectedObject = {
   otherBuilding : 'otherBuilding',
   other: 'other'
 }
+
 
 const changeSelectableCategory = (object) => {
   if(object === selectedObject.house){
@@ -67,6 +73,8 @@ const togglePen = (mode) => {
     }
   }
 }
+
+// Bilder Droppen können
 function allowDrop(e) {
   e.preventDefault();
 }
@@ -98,13 +106,72 @@ const setEvent = (canvas) => {
       canvas.isDrawingMode = true;
       canvas.renderAll();
     }
+    if(this.panning) {
+      var e = event.e;
+      var zoom = canvas.getZoom();
+      var vpt = canvas.viewportTransform;
+      if (zoom < 0.4) {
+        vpt[4] = 200 - 1000 * zoom / 2;
+        vpt[5] = 200 - 1000 * zoom / 2;
+      } else {
+        vpt[4] += e.clientX - this.lastPosX;
+        vpt[5] += e.clientY - this.lastPosY;
+        if (vpt[4] >= 0) {
+          vpt[4] = 0;
+        } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
+          vpt[4] = canvas.getWidth() - 1000 * zoom;
+        }
+        if (vpt[5] >= 0) {
+          vpt[5] = 0;
+        } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
+          vpt[5] = canvas.getHeight() - 1000 * zoom;
+        }
+      }
+      canvas.requestRenderAll();
+      this.lastPosX = e.clientX;
+      this.lastPosY = e.clientY;
+    }
   });
   canvas.on('mouse:up', (event) => {
     mousePressed = false;
-
+    canvas.setViewportTransform(canvas.viewportTransform);
+    this.panning = false;
   });
   canvas.on('mouse:down', (event) => {
     mousePressed = true;
+    var evt = event.e;
+    if(evt.altKey === true){
+      this.lastPosX = evt.clientX;
+      this.lastPosY = evt.clientY;
+      this.panning = true;
+    }
+  });
+  canvas.on('mouse:wheel', (event) => {
+    var delta = event.e.deltaY;
+    var zoom = canvas.getZoom();
+    zoom *= 0.999 ** delta;
+    if (zoom > 20) zoom = 20;
+    if (zoom < 0.1) zoom = 0.1;
+    canvas.zoomToPoint({x: event.e.offsetX, y: event.e.offsetY}, zoom);
+    event.e.preventDefault();
+    event.e.stopPropagation();
+
+    var vpt = canvas.viewportTransform;
+    if (zoom < 0.4) {
+      vpt[4] = 200 - 1000 * zoom / 2;
+      vpt[5] = 200 - 1000 * zoom / 2;
+    } else {
+      if (vpt[4] >= 0) {
+        vpt[4] = 0;
+      } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
+        vpt[4] = canvas.getWidth() - 1000 * zoom;
+      }
+      if (vpt[5] >= 0) {
+        vpt[5] = 0;
+      } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
+        vpt[5] = canvas.getHeight() - 1000 * zoom;
+      }
+    }
 
   });
 }
