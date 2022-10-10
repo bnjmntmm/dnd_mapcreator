@@ -33,6 +33,8 @@ const selectedObject = {
 }
 
 
+// Zwischen den verschiedenen Kategorien wechseln
+
 const changeSelectableCategory = (object) => {
   if(object === selectedObject.house){
     generateImage(selectedObject.house);
@@ -63,6 +65,8 @@ const changeSelectableCategory = (object) => {
   }
 }
 
+// Pen mode wechseln
+
 const togglePen = (mode) => {
   if(mode === modes.draw){
     if(currentMode === modes.draw){
@@ -75,6 +79,7 @@ const togglePen = (mode) => {
 }
 
 // Bilder Droppen können
+
 function allowDrop(e) {
   e.preventDefault();
 }
@@ -155,7 +160,6 @@ const setEvent = (canvas) => {
     canvas.zoomToPoint({x: event.e.offsetX, y: event.e.offsetY}, zoom);
     event.e.preventDefault();
     event.e.stopPropagation();
-
     var vpt = canvas.viewportTransform;
     if (zoom < 0.4) {
       vpt[4] = 200 - 1000 * zoom / 2;
@@ -174,6 +178,15 @@ const setEvent = (canvas) => {
     }
 
   });
+  //snapping to grid -> feels laggy.. maybe only for drawing
+  // canvas.on('object:moving', function(options) {
+  //   options.target.set({
+  //     left: Math.round(options.target.left / grid) * grid,
+  //     top: Math.round(options.target.top / grid) * grid
+  //   });
+  // });
+  //
+
 }
 
 var imgArrayNature = [
@@ -216,7 +229,20 @@ let generateImage = (obj) => {
   }
 }
 
-
 setEvent(canvas);
 
+
+
+
+let gridCalculation = (grid) => {
+  for (var i = 0; i < ((canvas.width) / grid); i++) {
+    var line1 = new fabric.Line([i * grid, 0, i * grid, canvas.height], {stroke: '#ccc', selectable: false});
+    var line2 = new fabric.Line([0, i * grid, canvas.width, i * grid], {stroke: '#ccc', selectable: false,});
+    canvas.add(line1);
+    canvas.add(line2);
+    canvas.sendToBack(line1);
+    canvas.sendToBack(line2);
+  }
+}
+gridCalculation(20);
 
