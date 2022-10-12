@@ -36,8 +36,7 @@ const selectedObject = {
 }
 
 
-
-
+var context = document.getElementById('canvas').getContext('2d');
 
 // Zwischen den verschiedenen Kategorien wechseln
 
@@ -72,21 +71,29 @@ const changeSelectableCategory = (object) => {
 }
 
 // Pen mode wechseln
-var img = new Image();
-img.objectCaching = false;
-img.src = '/assets/tiles/grass01.png';
-var texturePatternBrush = new fabric.PatternBrush(canvas);
-texturePatternBrush.source = img;
+
+//Brushs
+var grassBrushImg = new Image();
+grassBrushImg.objectCaching = false;
+grassBrushImg.src = '/assets/tiles/grass01.png';
+var grassPatternBrush = new fabric.PatternBrush(canvas);
+grassPatternBrush.source = grassBrushImg;
+
+
+
 
 const togglePen = (mode) => {
   if(mode === modes.draw){
     if(currentMode === modes.draw){
       currentMode = '';
       canvas.isDrawingMode = false;
+
     }else{
-      canvas.freeDrawingBrush = texturePatternBrush;
+      context.globalCompositeOperation = 'destination-over';
+      canvas.freeDrawingBrush = grassPatternBrush;
       canvas.freeDrawingBrush.width = parseInt('50');
       currentMode = modes.draw;
+
     }
   }
 }
@@ -102,16 +109,19 @@ function dragElement(e) {
 }
 
 function dropElement(e) {
+  context.globalCompositeOperation = 'source-over';
   e.preventDefault();
   var data = e.dataTransfer.getData("id"); //receiving the "data" i.e. id of the target dropped.
   var imag = document.getElementById(data); //getting the target image info through its id.
   var img = new fabric.Image(imag, { //initializing the fabric image.
     left: e.layerX - 80,  //positioning the target on exact position of mouse event drop through event.layerX,Y.
     top: e.layerY - 40,
+  //  layer: 1,
   });
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
   img.scaleToHeight(imag.height);
   canvas.add(img);
+
 }
 
 const deleteSelected = (ctx) => {
@@ -154,6 +164,7 @@ const setEvent = (canvas) => {
     mousePressed = false;
     canvas.setViewportTransform(canvas.viewportTransform);
     this.panning = false;
+
   });
   canvas.on('mouse:down', (event) => {
     mousePressed = true;
@@ -190,6 +201,13 @@ const setEvent = (canvas) => {
       }
     }
 
+  });
+
+  canvas.on('path:created', function (e) {
+    var path = e.path;
+    path.selectable = false;
+    path.hoverCursor = 'default';
+    canvas.sendToBack(path);
   });
   //snapping to grid -> feels laggy.. maybe only for drawing
   // canvas.on('object:moving', function(options) {
