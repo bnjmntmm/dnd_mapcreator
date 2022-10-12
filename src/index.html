@@ -28,7 +28,8 @@
         <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/Shop_1.png">
         </div>
       </div>
-      <button class="buttonDesign" onclick="togglePen(modes.draw)">Toggle pen</button>
+      <button class="buttonDesign" onclick="togglePen(modes.draw, 'path')">Toggle path</button>
+      <button class="buttonDesign" onclick="togglePen(modes.draw, 'grass')">Toggle grass</button>
   </div>
   <div class="div2" ondragover="allowDrop(event)" ondrop="dropElement(event)">
     <canvas id="canvas" width="700" height="700"></canvas>

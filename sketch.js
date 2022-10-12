@@ -76,23 +76,35 @@ const changeSelectableCategory = (object) => {
 var grassBrushImg = new Image();
 grassBrushImg.objectCaching = false;
 grassBrushImg.src = '/assets/tiles/grass01.png';
+grassBrushImg.alt = 'grassBrush';
 var grassPatternBrush = new fabric.PatternBrush(canvas);
 grassPatternBrush.source = grassBrushImg;
 
+var pathBrushImg = new Image();
+pathBrushImg.objectCaching = false;
+pathBrushImg.alt = 'pathBrush';
+pathBrushImg.src = '/assets/tiles/dirt01.png';
+var pathPatternBrush = new fabric.PatternBrush(canvas);
+pathPatternBrush.source = pathBrushImg;
 
 
-
-const togglePen = (mode) => {
+const togglePen = (mode, activeBrush) => {
   if(mode === modes.draw){
     if(currentMode === modes.draw){
       currentMode = '';
       canvas.isDrawingMode = false;
 
     }else{
-      context.globalCompositeOperation = 'destination-over';
-      canvas.freeDrawingBrush = grassPatternBrush;
-      canvas.freeDrawingBrush.width = parseInt('50');
-      currentMode = modes.draw;
+      if(activeBrush === 'grass') {
+        canvas.freeDrawingBrush = grassPatternBrush;
+        canvas.freeDrawingBrush.width = parseInt('50');
+        currentMode = modes.draw;
+      }
+      if(activeBrush === 'path') {
+        canvas.freeDrawingBrush = pathPatternBrush;
+        canvas.freeDrawingBrush.width = parseInt('50');
+        currentMode = modes.draw;
+      }
 
     }
   }
@@ -114,8 +126,9 @@ function dropElement(e) {
   var data = e.dataTransfer.getData("id"); //receiving the "data" i.e. id of the target dropped.
   var imag = document.getElementById(data); //getting the target image info through its id.
   var img = new fabric.Image(imag, { //initializing the fabric image.
-    left: e.layerX - 80,  //positioning the target on exact position of mouse event drop through event.layerX,Y.
-    top: e.layerY - 40,
+    left: e.layerX -30,  //positioning the target on exact position of mouse event drop through event.layerX,Y.
+    top: e.layerY - 30,
+    type: 'image',
   //  layer: 1,
   });
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
@@ -128,6 +141,7 @@ const deleteSelected = (ctx) => {
   canvas.remove(ctx);
 }
 
+let lastPath = null;
 const setEvent = (canvas) => {
   canvas.on('mouse:move', (event) => {
     if(mousePressed && currentMode === modes.draw){
@@ -203,12 +217,30 @@ const setEvent = (canvas) => {
 
   });
 
+
   canvas.on('path:created', function (e) {
     var path = e.path;
     path.selectable = false;
     path.hoverCursor = 'default';
-    canvas.sendToBack(path);
+
+    //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
+    for(var i = 0; i < canvas.getObjects().length; i++){
+      if(canvas.item(i).type === 'path'){
+        while(i>0 && canvas.item(i-1).type === 'image'){
+          canvas.moveTo(canvas.item(i), i-1)
+          i = i-1;
+        }
+      }
+
+    }
+
   });
+
+
+
+
+
+
   //snapping to grid -> feels laggy.. maybe only for drawing
   // canvas.on('object:moving', function(options) {
   //   options.target.set({
@@ -219,6 +251,7 @@ const setEvent = (canvas) => {
   //
 
 }
+
 
 var imgArrayNature = [
   {
@@ -271,6 +304,10 @@ let saveCanvasAsImg = () => {
   createEl.download = 'createdMap.png';
   createEl.click();
   createEl.remove();
+}
+
+let getZIndex = (obj) => {
+  return canvas.getObjects().indexOf(obj);
 }
 
 // let gridCalculation = (grid) => {
