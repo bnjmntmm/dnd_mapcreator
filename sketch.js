@@ -1,9 +1,12 @@
+fabric.maxCacheSideLimit = 11000;
 var canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#fff',
   selection: false,
   stroke: 'green',
-  strokeWidth: 50
+  strokeWidth: 50,
+  preserveObjectStacking: true,
 });
+
 let mousePressed = false;
 let currentMode;
 let lastPosX;
@@ -31,6 +34,9 @@ const selectedObject = {
   otherBuilding : 'otherBuilding',
   other: 'other'
 }
+
+
+
 
 
 // Zwischen den verschiedenen Kategorien wechseln
@@ -66,6 +72,11 @@ const changeSelectableCategory = (object) => {
 }
 
 // Pen mode wechseln
+var img = new Image();
+img.objectCaching = false;
+img.src = '/assets/tiles/grass01.png';
+var texturePatternBrush = new fabric.PatternBrush(canvas);
+texturePatternBrush.source = img;
 
 const togglePen = (mode) => {
   if(mode === modes.draw){
@@ -73,6 +84,8 @@ const togglePen = (mode) => {
       currentMode = '';
       canvas.isDrawingMode = false;
     }else{
+      canvas.freeDrawingBrush = texturePatternBrush;
+      canvas.freeDrawingBrush.width = parseInt('50');
       currentMode = modes.draw;
     }
   }
@@ -167,13 +180,13 @@ const setEvent = (canvas) => {
     } else {
       if (vpt[4] >= 0) {
         vpt[4] = 0;
-      } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
-        vpt[4] = canvas.getWidth() - 1000 * zoom;
+      } else if (vpt[4] < canvas.width - 1000 * zoom) {
+        vpt[4] = canvas.width - 1000 * zoom;
       }
       if (vpt[5] >= 0) {
         vpt[5] = 0;
-      } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
-        vpt[5] = canvas.getHeight() - 1000 * zoom;
+      } else if (vpt[5] < canvas.height - 1000 * zoom) {
+        vpt[5] = canvas.height - 1000 * zoom;
       }
     }
 
@@ -232,17 +245,25 @@ let generateImage = (obj) => {
 setEvent(canvas);
 
 
+let saveCanvasAsImg = () => {
+  let canvasURl = canvas.toDataURL();
+  const createEl = document.createElement('a');
+  createEl.href = canvasURl;
 
-
-let gridCalculation = (grid) => {
-  for (var i = 0; i < ((canvas.width) / grid); i++) {
-    var line1 = new fabric.Line([i * grid, 0, i * grid, canvas.height], {stroke: '#ccc', selectable: false});
-    var line2 = new fabric.Line([0, i * grid, canvas.width, i * grid], {stroke: '#ccc', selectable: false,});
-    canvas.add(line1);
-    canvas.add(line2);
-    canvas.sendToBack(line1);
-    canvas.sendToBack(line2);
-  }
+  createEl.download = 'createdMap.png';
+  createEl.click();
+  createEl.remove();
 }
-gridCalculation(20);
+
+// let gridCalculation = (grid) => {
+//   for (var i = 0; i < ((canvas.width) / grid); i++) {
+//     var line1 = new fabric.Line([i * grid, 0, i * grid, canvas.height], {stroke: '#ccc', selectable: false});
+//     var line2 = new fabric.Line([0, i * grid, canvas.width, i * grid], {stroke: '#ccc', selectable: false,});
+//     canvas.add(line1);
+//     canvas.add(line2);
+//     canvas.sendToBack(line1);
+//     canvas.sendToBack(line2);
+//   }
+// }
+// gridCalculation(20);
 

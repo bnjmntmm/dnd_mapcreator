@@ -10,7 +10,7 @@
 <div class="parent">
 
   <div class="div1">
-    <button class="buttonDesgin" onclick="openNav()">☰ Open Objects</button>
+    <button class="buttonDesign" onclick="openNav()">☰ Open Objects</button>
     <div class="sidebar" id="leftSidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">x</a>
       <a href="#" onclick="changeSelectableCategory(selectedObject.house)">Houses</a>
@@ -28,13 +28,14 @@
         <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/Shop_1.png">
         </div>
       </div>
-      <button class="buttonDesgin" onclick="togglePen(modes.draw)">Toggle pen</button>
+      <button class="buttonDesign" onclick="togglePen(modes.draw)">Toggle pen</button>
   </div>
   <div class="div2" ondragover="allowDrop(event)" ondrop="dropElement(event)">
     <canvas id="canvas" width="700" height="700"></canvas>
   </div>
   <div class="div3">
-    <button class="buttonDesgin" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
+    <button class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
+    <button class="buttonDesign" onclick="saveCanvasAsImg()">Save as IMG</button>
   </div>
 </div>
 <script src="/sketch.js"></script>
