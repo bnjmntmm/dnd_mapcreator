@@ -20,7 +20,6 @@ function handleRequest(req, res) {
   if (pathname == '/') {
     pathname = '/src/index.html';
   }
-
   // Ok what's our file extension
   var ext = path.extname(pathname);
 

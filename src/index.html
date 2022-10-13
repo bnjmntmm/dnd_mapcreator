@@ -10,7 +10,7 @@
 <div class="parent">
 
   <div class="div1">
-    <button class="buttonDesign" onclick="openNav()">☰ Open Objects</button>
+
     <div class="sidebar" id="leftSidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">x</a>
       <a href="#" onclick="changeSelectableCategory(selectedObject.house)">Houses</a>
@@ -20,14 +20,7 @@
       <a href="#" onclick="changeSelectableCategory(selectedObject.otherBuilding)">Other Buildings</a>
       <a href="#" onclick="changeSelectableCategory(selectedObject.other)">etc.</a>
     </div>
-    <div class="img_cont">
-        <div id="imgFiller">
-        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_1.png">
-        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_2.png">
-        <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_3.png">
-        <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/Shop_1.png">
-        </div>
-      </div>
+
       <button class="buttonDesign" onclick="togglePen(modes.draw, 'path')">Toggle path</button>
       <button class="buttonDesign" onclick="togglePen(modes.draw, 'grass')">Toggle grass</button>
   </div>
@@ -35,6 +28,15 @@
     <canvas id="canvas" width="700" height="700"></canvas>
   </div>
   <div class="div3">
+    <button class="buttonDesign" onclick="openNav()">☰ Open Objects</button>
+    <div class="img_cont">
+      <div id="imgFiller">
+        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_1.png">
+        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_2.png">
+        <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_3.png">
+        <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/Shop_1.png">>
+      </div>
+    </div>
     <button class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
     <button class="buttonDesign" onclick="saveCanvasAsImg()">Save as IMG</button>
   </div>

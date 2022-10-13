@@ -87,27 +87,49 @@ pathBrushImg.src = '/assets/tiles/dirt01.png';
 var pathPatternBrush = new fabric.PatternBrush(canvas);
 pathPatternBrush.source = pathBrushImg;
 
-
+let currentBrush;
 const togglePen = (mode, activeBrush) => {
   if(mode === modes.draw){
-    if(currentMode === modes.draw){
-      currentMode = '';
-      canvas.isDrawingMode = false;
+    if(currentBrush !== activeBrush){
 
-    }else{
       if(activeBrush === 'grass') {
-        canvas.freeDrawingBrush = grassPatternBrush;
-        canvas.freeDrawingBrush.width = parseInt('50');
-        currentMode = modes.draw;
-      }
-      if(activeBrush === 'path') {
-        canvas.freeDrawingBrush = pathPatternBrush;
-        canvas.freeDrawingBrush.width = parseInt('50');
-        currentMode = modes.draw;
-      }
 
+        currentBrush = 'grass';
+        canvas.freeDrawingBrush = grassPatternBrush;
+        canvas.freeDrawingBrush.width = 50;
+        canvas.isDrawingMode = true;
+      } else if(activeBrush === 'path') {
+
+          currentBrush = 'path';
+          canvas.freeDrawingBrush = pathPatternBrush;
+          canvas.freeDrawingBrush.width = 50;
+          canvas.isDrawingMode = true;
+      }
+    } else{
+      currentBrush = undefined;
+      canvas.isDrawingMode = false;
     }
   }
+
+  // if(mode === modes.draw){
+  //   if(currentMode === modes.draw){
+  //     currentMode = '';
+  //     canvas.isDrawingMode = false;
+  //
+  //   }else{
+  //     if(activeBrush === 'grass') {
+  //       canvas.freeDrawingBrush = grassPatternBrush;
+  //       canvas.freeDrawingBrush.width = parseInt('50');
+  //       currentMode = modes.draw;
+  //     }
+  //     if(activeBrush === 'path') {
+  //       canvas.freeDrawingBrush = pathPatternBrush;
+  //       canvas.freeDrawingBrush.width = parseInt('50');
+  //       currentMode = modes.draw;
+  //     }
+  //
+  //   }
+  // }
 }
 
 // Bilder Droppen können
@@ -248,7 +270,7 @@ const setEvent = (canvas) => {
   //     top: Math.round(options.target.top / grid) * grid
   //   });
   // });
-  //
+
 
 }
 
@@ -259,6 +281,27 @@ var imgArrayNature = [
   },
   {
     img : '/assets/nature/tree2.png',id: "ele2", alt: 'Tree2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/tree3.png',id: "ele3", alt: 'Tree3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/tree4.png',id: "ele4", alt: 'Tree4 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/stone1.png',id: "ele5", alt: 'Stone1 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/stone2.png',id: "ele6", alt: 'Stone2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/stone3.png',id: "ele7", alt: 'Stone3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/stone4.png',id: "ele8", alt: 'Stone4 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/stone5.png',id: "ele9", alt: 'Stone5 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
 var imgArrayBuildings = [
@@ -275,6 +318,7 @@ var imgArrayBuildings = [
     img : '/assets/buildings/Shop_1.png',id: "ele4", alt: 'Shop image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
+
 let generateImage = (obj) => {
   let htmlOutput = "";
   var div = document.getElementById('imgFiller');
