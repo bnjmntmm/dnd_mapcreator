@@ -20,21 +20,26 @@
       <a href="#" onclick="changeSelectableCategory(selectedObject.otherBuilding)">Other Buildings</a>
       <a href="#" onclick="changeSelectableCategory(selectedObject.other)">etc.</a>
     </div>
-
       <button class="buttonDesign" onclick="togglePen(modes.draw, 'path')">Toggle path</button>
       <button class="buttonDesign" onclick="togglePen(modes.draw, 'grass')">Toggle grass</button>
+      <button class="buttonDesign" onclick="togglePen(modes.draw, 'water')">Toggle water</button>
+      <div class="slideContainer">
+        <input type="range" min="1" max="50" value="25" class="slider" id="penSlider">
+      </div>
+    <button class="buttonDesign" onclick="fillCanvas('path')">Fill with path</button>
+    <button class="buttonDesign" onclick="fillCanvas('grass')">Fill with grass</button>
   </div>
   <div class="div2" ondragover="allowDrop(event)" ondrop="dropElement(event)">
-    <canvas id="canvas" width="700" height="700"></canvas>
+    <canvas id="canvas" class="canvas" width="700px" height="700px"></canvas>
   </div>
   <div class="div3">
     <button class="buttonDesign" onclick="openNav()">☰ Open Objects</button>
     <div class="img_cont">
       <div id="imgFiller">
-        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_1.png">
-        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_2.png">
-        <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/House_3.png">
-        <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/Shop_1.png">>
+        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house1.png">
+        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house2.png">
+        <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house3.png">
+        <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/shop1.png">
       </div>
     </div>
     <button class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>

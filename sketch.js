@@ -1,17 +1,15 @@
-fabric.maxCacheSideLimit = 11000;
+//fabric.maxCacheSideLimit = 11000;
 var canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#fff',
   selection: false,
   stroke: 'green',
   strokeWidth: 50,
   preserveObjectStacking: true,
+  enableRetinaScaling: true,
 });
 
 let mousePressed = false;
 let currentMode;
-let lastPosX;
-let lastPosY;
-let panning;
 
 const modes = {
   draw: 'draw',
@@ -81,11 +79,29 @@ var grassPatternBrush = new fabric.PatternBrush(canvas);
 grassPatternBrush.source = grassBrushImg;
 
 var pathBrushImg = new Image();
-pathBrushImg.objectCaching = false;
 pathBrushImg.alt = 'pathBrush';
 pathBrushImg.src = '/assets/tiles/dirt01.png';
+// pathBrushImg.objectCaching = false;
 var pathPatternBrush = new fabric.PatternBrush(canvas);
 pathPatternBrush.source = pathBrushImg;
+pathPatternBrush.width = 10;
+pathPatternBrush.height = 10;
+
+
+
+var waterBrushImg = new Image();
+waterBrushImg.objectCaching = false;
+waterBrushImg.alt = 'waterBrush';
+waterBrushImg.src = '/assets/tiles/waterTile.png';
+var waterPatternBrush = new fabric.PatternBrush(canvas);
+waterPatternBrush.source = waterBrushImg;
+
+
+var penSlider = document.getElementById("penSlider");
+
+penSlider.onchange = function() {
+  canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+}
 
 let currentBrush;
 const togglePen = (mode, activeBrush) => {
@@ -96,14 +112,19 @@ const togglePen = (mode, activeBrush) => {
 
         currentBrush = 'grass';
         canvas.freeDrawingBrush = grassPatternBrush;
-        canvas.freeDrawingBrush.width = 50;
+        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
         canvas.isDrawingMode = true;
       } else if(activeBrush === 'path') {
 
           currentBrush = 'path';
           canvas.freeDrawingBrush = pathPatternBrush;
-          canvas.freeDrawingBrush.width = 50;
+          canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
           canvas.isDrawingMode = true;
+      } else if(activeBrush === 'water'){
+        currentBrush = 'water';
+        canvas.freeDrawingBrush = waterPatternBrush;
+        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+        canvas.isDrawingMode = true;
       }
     } else{
       currentBrush = undefined;
@@ -111,27 +132,24 @@ const togglePen = (mode, activeBrush) => {
     }
   }
 
-  // if(mode === modes.draw){
-  //   if(currentMode === modes.draw){
-  //     currentMode = '';
-  //     canvas.isDrawingMode = false;
-  //
-  //   }else{
-  //     if(activeBrush === 'grass') {
-  //       canvas.freeDrawingBrush = grassPatternBrush;
-  //       canvas.freeDrawingBrush.width = parseInt('50');
-  //       currentMode = modes.draw;
-  //     }
-  //     if(activeBrush === 'path') {
-  //       canvas.freeDrawingBrush = pathPatternBrush;
-  //       canvas.freeDrawingBrush.width = parseInt('50');
-  //       currentMode = modes.draw;
-  //     }
-  //
-  //   }
-  // }
-}
 
+}
+const fillCanvas = (backgroundColor) => {
+  if(backgroundColor === 'path') {
+    canvas.setBackgroundImage(pathBrushImg.src, canvas.renderAll.bind(canvas), {
+      scaleX: canvas.width / pathBrushImg.width,
+      scaleY: canvas.height / pathBrushImg.height
+
+    });
+  } else if(backgroundColor === 'grass') {
+    canvas.setBackgroundImage(grassBrushImg.src, canvas.renderAll.bind(canvas), {
+      scaleX: canvas.width / grassBrushImg.width,
+      scaleY: canvas.height / grassBrushImg.height,
+      objectCaching: false,
+
+    });
+  }
+}
 // Bilder Droppen können
 
 function allowDrop(e) {
@@ -155,6 +173,13 @@ function dropElement(e) {
   });
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
   img.scaleToHeight(imag.height);
+  img.minScaleLimit = 0.03;
+  img.setControlsVisibility({
+    mb: false,
+    ml: false,
+    mr: false,
+    mt: false,
+  });
   canvas.add(img);
 
 }
@@ -243,6 +268,7 @@ const setEvent = (canvas) => {
   canvas.on('path:created', function (e) {
     var path = e.path;
     path.selectable = false;
+    path.objectCaching = false;
     path.hoverCursor = 'default';
 
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
@@ -255,7 +281,25 @@ const setEvent = (canvas) => {
       }
 
     }
+  });
+  var maxScaleX = 1;
+  var maxScaleY = 1;
 
+  canvas.on('object:modified', function(e) {
+    if(e.target.type === 'image'){
+      if(e.target.scaleX > maxScaleX){
+        e.target.scaleX = maxScaleX;
+        e.target.left = this.lastGoodLeft;
+        e.target.top = this.lastGoodTop;
+      }
+      if(e.target.scaleY > maxScaleY){
+        e.target.scaleY = maxScaleY;
+        e.target.left = this.lastGoodLeft;
+        e.target.top = this.lastGoodTop;
+      }
+      this.lastGoodTop = e.target.top;
+      this.lastGoodLeft = e.target.left;
+    }
   });
 
 
@@ -306,16 +350,16 @@ var imgArrayNature = [
 ]
 var imgArrayBuildings = [
   {
-    img : '/assets/buildings/House_1.png',id: "ele1", alt: 'House image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house1.png',id: "ele1", alt: 'House image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/House_2.png',id: "ele2", alt: 'House2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house2.png',id: "ele2", alt: 'House2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/House_3.png',id: "ele3", alt: 'House3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house3.png',id: "ele3", alt: 'House3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/Shop_1.png',id: "ele4", alt: 'Shop image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/shop1.png',id: "ele4", alt: 'Shop image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
 
@@ -341,13 +385,26 @@ setEvent(canvas);
 
 
 let saveCanvasAsImg = () => {
-  let canvasURl = canvas.toDataURL();
+  canvas.setWidth(2000);
+  canvas.setHeight(2000);
+  canvas.calcOffset();
+  let canvasURl = canvas.toDataURL(`png`,1);
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
   createEl.download = 'createdMap.png';
   createEl.click();
   createEl.remove();
+  //  canvas.svgViewportTransformation = true;
+  //  let canvasURL = canvas.toSVG({
+  //    suppressPreamble: true,
+  //    width: 2000,
+  //     height: 2000
+  //  });
+
+  canvas.setWidth(700);
+  canvas.setHeight(700);
+  canvas.calcOffset();
 }
 
 let getZIndex = (obj) => {
