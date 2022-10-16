@@ -1,4 +1,6 @@
 //fabric.maxCacheSideLimit = 11000;
+var webglBackend = new fabric.WebglFilterBackend();
+fabric.filterBackend = webglBackend;
 var canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#fff',
   selection: false,
@@ -6,6 +8,7 @@ var canvas = new fabric.Canvas('canvas', {
   strokeWidth: 50,
   preserveObjectStacking: true,
   enableRetinaScaling: true,
+  imageSmoothingEnabled: false
 });
 
 let mousePressed = false;
@@ -73,21 +76,18 @@ const changeSelectableCategory = (object) => {
 //Brushs
 var grassBrushImg = new Image();
 grassBrushImg.objectCaching = false;
-grassBrushImg.src = '/assets/tiles/grass01.png';
+grassBrushImg.src = '/assets/tiles/grass02.png';
 grassBrushImg.alt = 'grassBrush';
 var grassPatternBrush = new fabric.PatternBrush(canvas);
 grassPatternBrush.source = grassBrushImg;
 
 var pathBrushImg = new Image();
 pathBrushImg.alt = 'pathBrush';
-pathBrushImg.src = '/assets/tiles/dirt01.png';
+pathBrushImg.objectCaching = false;
+pathBrushImg.src = '/assets/tiles/dirt02.png';
 // pathBrushImg.objectCaching = false;
 var pathPatternBrush = new fabric.PatternBrush(canvas);
 pathPatternBrush.source = pathBrushImg;
-pathPatternBrush.width = 10;
-pathPatternBrush.height = 10;
-
-
 
 var waterBrushImg = new Image();
 waterBrushImg.objectCaching = false;
@@ -136,18 +136,10 @@ const togglePen = (mode, activeBrush) => {
 }
 const fillCanvas = (backgroundColor) => {
   if(backgroundColor === 'path') {
-    canvas.setBackgroundImage(pathBrushImg.src, canvas.renderAll.bind(canvas), {
-      scaleX: canvas.width / pathBrushImg.width,
-      scaleY: canvas.height / pathBrushImg.height
-
-    });
-  } else if(backgroundColor === 'grass') {
-    canvas.setBackgroundImage(grassBrushImg.src, canvas.renderAll.bind(canvas), {
-      scaleX: canvas.width / grassBrushImg.width,
-      scaleY: canvas.height / grassBrushImg.height,
-      objectCaching: false,
-
-    });
+    canvas.setBackgroundColor({source: pathBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas)
+    );
+    } else if(backgroundColor === 'grass') {
+    canvas.setBackgroundColor({source: grassBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas));
   }
 }
 // Bilder Droppen können
@@ -173,7 +165,7 @@ function dropElement(e) {
   });
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
   img.scaleToHeight(imag.height);
-  img.minScaleLimit = 0.03;
+  img.minScaleLimit = 0.05;
   img.setControlsVisibility({
     mb: false,
     ml: false,
@@ -240,13 +232,13 @@ const setEvent = (canvas) => {
     var delta = event.e.deltaY;
     var zoom = canvas.getZoom();
     zoom *= 0.999 ** delta;
-    if (zoom > 20) zoom = 20;
-    if (zoom < 0.1) zoom = 0.1;
+    if (zoom > 2) zoom = 2;
+    if (zoom < 0.05) zoom = 0.05;
     canvas.zoomToPoint({x: event.e.offsetX, y: event.e.offsetY}, zoom);
     event.e.preventDefault();
     event.e.stopPropagation();
     var vpt = canvas.viewportTransform;
-    if (zoom < 0.4) {
+    if (zoom < 0.05) {
       vpt[4] = 200 - 1000 * zoom / 2;
       vpt[5] = 200 - 1000 * zoom / 2;
     } else {
@@ -384,6 +376,7 @@ let generateImage = (obj) => {
 setEvent(canvas);
 
 
+
 let saveCanvasAsImg = () => {
   canvas.setWidth(2000);
   canvas.setHeight(2000);
@@ -392,16 +385,17 @@ let saveCanvasAsImg = () => {
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
-  createEl.download = 'createdMap.png';
-  createEl.click();
-  createEl.remove();
-  //  canvas.svgViewportTransformation = true;
-  //  let canvasURL = canvas.toSVG({
-  //    suppressPreamble: true,
-  //    width: 2000,
-  //     height: 2000
-  //  });
+  // createEl.download = 'createdMap.png';
+  // createEl.click();
+  // createEl.remove();
+   canvas.svgViewportTransformation = true;
+   let canvasURLSVG = canvas.toSVG({
+     suppressPreamble: true,
+     width: 2000,
+      height: 2000
+   });
 
+   console.log(canvasURLSVG);
   canvas.setWidth(700);
   canvas.setHeight(700);
   canvas.calcOffset();
