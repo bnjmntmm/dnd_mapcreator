@@ -8,11 +8,8 @@ var path = require('path');
 var fs = require('fs');
 
 var server = http.createServer(handleRequest);
-const hostname = '192.168.178.43';
-server.listen(8080, hostname ,() => {
-  console.log(`Server running at http://${hostname}:8080/`);
-});
-
+server.listen(8080);
+console.log('Server running at localhost:8080');
 
 function handleRequest(req, res) {
   // What did we request?

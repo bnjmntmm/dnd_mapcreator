@@ -152,6 +152,8 @@ function dragElement(e) {
   e.dataTransfer.setData("id", e.target.id); //transfer the "data" i.e. id of the target dragged.
 }
 
+let placesList = document.getElementById('placedObjectList');
+
 function dropElement(e) {
   context.globalCompositeOperation = 'source-over';
   e.preventDefault();
@@ -161,8 +163,11 @@ function dropElement(e) {
     left: e.layerX -30,  //positioning the target on exact position of mouse event drop through event.layerX,Y.
     top: e.layerY - 30,
     type: 'image',
+    alt: imag.alt,
   //  layer: 1,
   });
+
+
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
   img.scaleToHeight(imag.height);
   img.minScaleLimit = 0.05;
@@ -174,10 +179,22 @@ function dropElement(e) {
   });
   canvas.add(img);
 
+  let listItem = document.createElement('li');
+  listItem.innerText = img.alt;
+  placesList.appendChild(listItem);
 }
+
+
 
 const deleteSelected = (ctx) => {
   canvas.remove(ctx);
+  for(let i= 0; i < placesList.children.length; i++){
+    if(placesList.children[i].innerText === ctx.alt){
+      placesList.children[i].remove();
+      break;
+    }
+  }
+
 }
 
 let lastPath = null;
@@ -342,16 +359,16 @@ var imgArrayNature = [
 ]
 var imgArrayBuildings = [
   {
-    img : '/assets/buildings/house1.png',id: "ele1", alt: 'House image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house1.png',id: "ele1", alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/house2.png',id: "ele2", alt: 'House2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house2.png',id: "ele2", alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/house3.png',id: "ele3", alt: 'House3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house3.png',id: "ele3",  alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/shop1.png',id: "ele4", alt: 'Shop image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/shop1.png',id: "ele4",  alt: 'shop', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
 

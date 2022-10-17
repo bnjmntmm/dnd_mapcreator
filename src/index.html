@@ -36,14 +36,15 @@
     <button class="buttonDesign" onclick="openNav()">☰ Open Objects</button>
     <div class="img_cont">
       <div id="imgFiller">
-        <img class="img" id="ele1" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house1.png">
-        <img class="img" id="ele2" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house2.png">
-        <img class="img" id="ele4" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house3.png">
-        <img class="img" id="ele5" draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/shop1.png">
+        <img class="img" id="ele1" alt='house' draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house1.png">
+        <img class="img" id="ele2" alt='house'draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house2.png">
+        <img class="img" id="ele4" alt='house' draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/house3.png">
+        <img class="img" id="ele5" alt='shop' draggable="true" ondragstart="dragElement(event)" src="/assets/buildings/shop1.png">
       </div>
     </div>
     <button class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
     <button class="buttonDesign" onclick="saveCanvasAsImg()">Save as IMG</button>
+    <ul id="placedObjectList"></ul>
   </div>
 </div>
 <script src="/sketch.js"></script>
