@@ -1,13 +1,13 @@
 <html>
 <head>
-  <link rel="stylesheet" href="../stylesheet/style.css">
+  <link rel="stylesheet" href="stylesheet/style.css">
   <meta charset="utf-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.js" integrity="sha512-q7T9VUu0gBgAGV3YkcvI0wjeBJONO5Cg/+688NkDC6qupjUvEG9ZmNK4GjZWvWuuT1VIjS0abwE1IKXVew8Ohw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <title>DND - MapGenerator</title>
 </head>
 <body>
 
-<div class="parent">
+<div class="parent" id="parent">
 
   <div class="div1">
 
@@ -44,9 +44,10 @@
     </div>
     <button class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())">Delete selected object</button>
     <button class="buttonDesign" onclick="saveCanvasAsImg()">Save as IMG</button>
+    <button class="buttonDesign" onclick="distanceBetweenImages()">Distance</button>
     <ul id="placedObjectList"></ul>
   </div>
 </div>
-<script src="/sketch.js"></script>
+<script src="sketch.js"></script>
 </body>
 </html>

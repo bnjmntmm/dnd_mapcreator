@@ -17,7 +17,7 @@ function handleRequest(req, res) {
 
   // If blank let's ask for index.html
   if (pathname == '/') {
-    pathname = '/src/index.html';
+    pathname = '/index.html';
   }
   // Ok what's our file extension
   var ext = path.extname(pathname);

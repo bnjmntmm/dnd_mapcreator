@@ -20,11 +20,11 @@ const modes = {
 
 const openNav = () => {
   document.getElementById("leftSidebar").style.width = "250px";
-  document.getElementById("parent").style.marginLeft = "250px";
+  document.getElementById("parent").style.marginRight = "250px";
 }
 const closeNav = () => {
   document.getElementById("leftSidebar").style.width = "0";
-  document.getElementById("parent").style.marginLeft= "0";
+  document.getElementById("parent").style.marginRight= "0";
 }
 
 const selectedObject = {
@@ -166,6 +166,8 @@ function dropElement(e) {
     alt: imag.alt,
   //  layer: 1,
   });
+
+  // img.getCenterPoint();
 
 
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
@@ -310,7 +312,11 @@ const setEvent = (canvas) => {
       this.lastGoodLeft = e.target.left;
     }
   });
-
+  canvas.on('object:added', function (obj){
+    if(obj.target.type === 'image'){
+      //console.log(obj.target.getCenterPoint());
+    }
+  });
 
 
 
@@ -327,6 +333,42 @@ const setEvent = (canvas) => {
 
 }
 
+let distanceBetweenImages = () => {
+  let objectsInCanvas = canvas.getObjects('image');
+
+
+  const points = [
+    { x: 40, y: 40 },
+    { x: 41, y: 41 },
+    { x: 60, y: 60 },
+    { x: 70, y: 175 },
+    { x: 65, y: 35 },
+    { x: 10, y: 70 },
+    { x: 50, y: 50 },
+    { x: 40, y: 40 },
+    { x: 200, y: 20 },
+  ];
+  for (let i = 0; i < objectsInCanvas.length; i++) {
+    for (let j = 0; j < objectsInCanvas.length; j++) {
+      if (objectsInCanvas[i] !== objectsInCanvas[j]) {
+        if (objectsInCanvas[i].getCenterPoint().distanceFrom(objectsInCanvas[j].getCenterPoint()) < 200) {
+        }
+      }
+    }
+  };
+  const brush = new fabric.PencilBrush(canvas);
+
+  points.forEach((point, index) => {
+    if (index === 0) {
+      brush.onMouseDown(point);
+    } else {
+      brush.onMouseMove(point);
+    }
+  });
+
+  brush.onMouseUp();
+
+}
 
 var imgArrayNature = [
   {
@@ -402,17 +444,16 @@ let saveCanvasAsImg = () => {
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
-  // createEl.download = 'createdMap.png';
-  // createEl.click();
-  // createEl.remove();
-   canvas.svgViewportTransformation = true;
-   let canvasURLSVG = canvas.toSVG({
-     suppressPreamble: true,
-     width: 2000,
-      height: 2000
-   });
+  createEl.download = 'createdMap.png';
+  createEl.click();
+  createEl.remove();
+  //  canvas.svgViewportTransformation = true;
+  //  let canvasURLSVG = canvas.toSVG({
+  //    suppressPreamble: true,
+  //    width: 2000,
+  //     height: 2000
+  //  });
 
-   console.log(canvasURLSVG);
   canvas.setWidth(700);
   canvas.setHeight(700);
   canvas.calcOffset();
