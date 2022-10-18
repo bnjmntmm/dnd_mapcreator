@@ -167,9 +167,6 @@ function dropElement(e) {
   //  layer: 1,
   });
 
-  // img.getCenterPoint();
-
-
   img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
   img.scaleToHeight(imag.height);
   img.minScaleLimit = 0.05;
@@ -283,16 +280,9 @@ const setEvent = (canvas) => {
     path.hoverCursor = 'default';
 
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
-    for(var i = 0; i < canvas.getObjects().length; i++){
-      if(canvas.item(i).type === 'path'){
-        while(i>0 && canvas.item(i-1).type === 'image'){
-          canvas.moveTo(canvas.item(i), i-1)
-          i = i-1;
-        }
-      }
+    sortingAlgorithm();
 
-    }
-  });
+    });
   var maxScaleX = 1;
   var maxScaleY = 1;
 
@@ -321,7 +311,6 @@ const setEvent = (canvas) => {
 
 
 
-
   //snapping to grid -> feels laggy.. maybe only for drawing
   // canvas.on('object:moving', function(options) {
   //   options.target.set({
@@ -333,42 +322,50 @@ const setEvent = (canvas) => {
 
 }
 
-let distanceBetweenImages = () => {
-  let objectsInCanvas = canvas.getObjects('image');
-
-
-  const points = [
-    { x: 40, y: 40 },
-    { x: 41, y: 41 },
-    { x: 60, y: 60 },
-    { x: 70, y: 175 },
-    { x: 65, y: 35 },
-    { x: 10, y: 70 },
-    { x: 50, y: 50 },
-    { x: 40, y: 40 },
-    { x: 200, y: 20 },
-  ];
-  for (let i = 0; i < objectsInCanvas.length; i++) {
-    for (let j = 0; j < objectsInCanvas.length; j++) {
-      if (objectsInCanvas[i] !== objectsInCanvas[j]) {
-        if (objectsInCanvas[i].getCenterPoint().distanceFrom(objectsInCanvas[j].getCenterPoint()) < 200) {
-        }
+let sortingAlgorithm = () => {
+  for(var i = 0; i < canvas.getObjects().length; i++){
+    if(canvas.item(i).type === 'path' || canvas.item(i).id === 'generatedLine'){
+      while(i>0 && canvas.item(i-1).type === 'image'){
+        canvas.moveTo(canvas.item(i), i-1)
+        i = i-1;
       }
     }
-  };
-  const brush = new fabric.PencilBrush(canvas);
 
-  points.forEach((point, index) => {
-    if (index === 0) {
-      brush.onMouseDown(point);
-    } else {
-      brush.onMouseMove(point);
-    }
-  });
-
-  brush.onMouseUp();
-
+  }
 }
+
+let generateLineBetweenObjects = () => {
+  let distance = 0;
+  //let points = [];
+  let imageObjectsInCanvas = canvas.getObjects('image');
+  let objectsInCanvas = canvas.getObjects();
+  for (let i = 0; i < imageObjectsInCanvas.length; i++) {
+    for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
+      if (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j]) {
+        distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
+        if (distance < 300) {
+          let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
+            strokeWidth: 20,
+            id: 'generatedLine',
+            objectCaching: false,
+            selectable: false,
+          });
+          line.set('stroke', new fabric.Pattern({
+            source: pathBrushImg,
+            repeat: 'no-repeat',
+          }));
+          canvas.add(line);
+          sortingAlgorithm();
+
+        }
+      }
+      }
+    }
+
+
+
+  };
+
 
 var imgArrayNature = [
   {
