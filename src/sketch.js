@@ -278,7 +278,6 @@ const setEvent = (canvas) => {
     path.selectable = false;
     path.objectCaching = false;
     path.hoverCursor = 'default';
-
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
     sortingAlgorithm();
 
@@ -337,24 +336,37 @@ let sortingAlgorithm = () => {
 let generateLineBetweenObjects = () => {
   let distance = 0;
   //let points = [];
+  let line2;
   let imageObjectsInCanvas = canvas.getObjects('image');
-  let objectsInCanvas = canvas.getObjects();
   for (let i = 0; i < imageObjectsInCanvas.length; i++) {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
       if (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j]) {
         distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
-        if (distance < 300) {
-          let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
-            strokeWidth: 20,
-            id: 'generatedLine',
-            objectCaching: false,
-            selectable: false,
-          });
-          line.set('stroke', new fabric.Pattern({
-            source: pathBrushImg,
-            repeat: 'no-repeat',
-          }));
-          canvas.add(line);
+        if (distance < 500) {
+          //- Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
+          line2 = new fabric.Path('M 200 250 Q 350 250 550 250 ', { fill: '', stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}), strokeWidth: 10, objectCaching: false, id:'generatedLine', selectable: false });
+          line2.path[0][1] = imageObjectsInCanvas[i].getCenterPoint().x;
+          line2.path[0][2] = imageObjectsInCanvas[i].getCenterPoint().y;
+          line2.path[1][1] = getRandomValue(imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().x);
+          line2.path[1][2] = (imageObjectsInCanvas[j].getCenterPoint().y + imageObjectsInCanvas[j].getCenterPoint().y)/2 ;
+          line2.path[1][3] = imageObjectsInCanvas[j].getCenterPoint().x;
+          line2.path[1][4] = imageObjectsInCanvas[j].getCenterPoint().y;
+          canvas.add(line2)
+          console.log(line2);
+
+          // just a straight line between the two objects
+          // let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
+          //   strokeWidth: 20,
+          //   id: 'generatedLine',
+          //   objectCaching: false,
+          //   selectable: false,
+          // });
+          // line.set('stroke', new fabric.Pattern({
+          //   source: pathBrushImg,
+          //   repeat: 'no-repeat',
+          // }));
+          // canvas.add(line);
+
           sortingAlgorithm();
 
         }
@@ -366,6 +378,18 @@ let generateLineBetweenObjects = () => {
 
   };
 
+function getRandomValue(valueX, valueY) {
+    if(valueX < valueY){
+      let min = Math.ceil(valueX);
+      let max = Math.floor(valueY);
+      return Math.floor(Math.random() * (valueY - valueX) + valueX);
+    } else{
+      let min = Math.ceil(valueY);
+      let max = Math.floor(valueX);
+      return Math.floor(Math.random() * (valueX - valueY) + valueY);
+    }
+
+}
 
 var imgArrayNature = [
   {
