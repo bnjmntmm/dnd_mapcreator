@@ -244,32 +244,47 @@ const setEvent = (canvas) => {
       this.panning = true;
     }
   });
-  canvas.on('mouse:wheel', (event) => {
-    var delta = event.e.deltaY;
-    var zoom = canvas.getZoom();
-    zoom *= 0.999 ** delta;
-    if (zoom > 2) zoom = 2;
-    if (zoom < 0.05) zoom = 0.05;
-    canvas.zoomToPoint({x: event.e.offsetX, y: event.e.offsetY}, zoom);
-    event.e.preventDefault();
-    event.e.stopPropagation();
-    var vpt = canvas.viewportTransform;
-    if (zoom < 0.05) {
-      vpt[4] = 200 - 1000 * zoom / 2;
-      vpt[5] = 200 - 1000 * zoom / 2;
-    } else {
-      if (vpt[4] >= 0) {
-        vpt[4] = 0;
-      } else if (vpt[4] < canvas.width - 1000 * zoom) {
-        vpt[4] = canvas.width - 1000 * zoom;
-      }
-      if (vpt[5] >= 0) {
-        vpt[5] = 0;
-      } else if (vpt[5] < canvas.height - 1000 * zoom) {
-        vpt[5] = canvas.height - 1000 * zoom;
-      }
+  canvas.on('mouse:wheel', (opt) => {
+    // For zoom-to-cursor
+
+
+    // ---------------
+    // Wheel speed/resolution adjustment
+    // ---------------
+    let delta = 0
+    let wheelDelta = opt.e.wheelDelta
+    let deltaY = opt.e.deltaY
+    // CHROME WIN/MAC | SAFARI 7 MAC | OPERA WIN/MAC | EDGE
+    if (wheelDelta) {
+      delta = -wheelDelta / 120
+    }
+    // FIREFOX WIN / MAC | IE
+    if(deltaY) {
+      deltaY > 0 ? delta = 1 : delta = -1
     }
 
+    let pointer = canvas.getPointer(opt.e)
+    let zoom = canvas.getZoom() - delta / 10
+
+    // limit zoom in
+    if (zoom > 3) zoom = 3
+
+    // limit zoom out and reset canvas to dead-center
+    if (zoom < 0.3) {
+      zoom = 0.3
+      this.reset(canvas)
+    }
+
+    canvas.zoomToPoint({
+      x: opt.e.offsetX,
+      y: opt.e.offsetY
+    }, zoom)
+
+    opt.e.preventDefault()
+    opt.e.stopPropagation()
+
+    canvas.renderAll()
+    canvas.calcOffset()
   });
 
 
@@ -343,7 +358,12 @@ let generateLineBetweenObjects = () => {
       if (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j]) {
         distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
         if (distance < 500) {
-          //- Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
+          //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
+          imageObjectsInCanvas[i].setCoords();
+
+          console.log(imageObjectsInCanvas[i])
+          imageObjectsInCanvas[j].setCoords();
+
           line2 = new fabric.Path('M 200 250 Q 350 250 550 250 ', { fill: '', stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}), strokeWidth: 10, objectCaching: false, id:'generatedLine', selectable: false });
           line2.path[0][1] = imageObjectsInCanvas[i].getCenterPoint().x;
           line2.path[0][2] = imageObjectsInCanvas[i].getCenterPoint().y;
@@ -352,7 +372,6 @@ let generateLineBetweenObjects = () => {
           line2.path[1][3] = imageObjectsInCanvas[j].getCenterPoint().x;
           line2.path[1][4] = imageObjectsInCanvas[j].getCenterPoint().y;
           canvas.add(line2)
-          console.log(line2);
 
           // just a straight line between the two objects
           // let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
@@ -382,11 +401,11 @@ function getRandomValue(valueX, valueY) {
     if(valueX < valueY){
       let min = Math.ceil(valueX);
       let max = Math.floor(valueY);
-      return Math.floor(Math.random() * (valueY - valueX) + valueX);
+      return Math.floor(Math.random() * (max - min) + min);
     } else{
       let min = Math.ceil(valueY);
       let max = Math.floor(valueX);
-      return Math.floor(Math.random() * (valueX - valueY) + valueY);
+      return Math.floor(Math.random() * (max - min) + min);
     }
 
 }
