@@ -454,7 +454,17 @@ var imgArrayNature = [
   },
   {
     img : '/assets/nature/stone5.png',id: "ele9", alt: 'Stone5 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/skeleton1.png',id: "ele9", alt: 'Skeleton1 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/skeleton2.png',id: "ele9", alt: 'Skeleton2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/skeleton3.png',id: "ele9", alt: 'Skeleton3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
+
 ]
 var imgArrayBuildings = [
   {
