@@ -168,7 +168,7 @@ function dropElement(e) {
   context.globalCompositeOperation = 'source-over';
   e.preventDefault();
   var data = e.dataTransfer.getData("id"); //receiving the "data" i.e. id of the target dropped.
-  var imag = document.getElementById(data); //getting the target image info through its id.
+  var imag = document.getElementById(data); //getting the target image i nfo through its id.
   var img = new fabric.Image(imag, { //initializing the fabric image.
     left: e.layerX -30,  //positioning the target on exact position of mouse event drop through event.layerX,Y.
     top: e.layerY - 30,
@@ -293,7 +293,7 @@ const setEvent = (canvas) => {
     opt.e.preventDefault()
     opt.e.stopPropagation()
 
-    canvas.enderAll()
+    canvas.renderAll()
     canvas.calcOffset()
   });
 
@@ -365,7 +365,7 @@ let generateLineBetweenObjects = () => {
   let imageObjectsInCanvas = canvas.getObjects('image');
   for (let i = 0; i < imageObjectsInCanvas.length; i++) {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
-      if (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j]) {
+      if ((imageObjectsInCanvas[i].alt === 'building' && imageObjectsInCanvas[j].alt === 'building') &&  (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j])) {
         distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
         if (distance < 500) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
@@ -380,7 +380,20 @@ let generateLineBetweenObjects = () => {
           }
 
           //console.log(imageObjectsInCanvas[i].getPointByOrigin('center', 'top').x)
-          line2 = new fabric.Path('M -500 -500 Q 0 0 0 0 ', { fill: '', stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}), strokeWidth: pathWidth(imageObjectsInCanvas[i].scaleX, imageObjectsInCanvas[j].scaleX), objectCaching: false, id:'generatedLine', selectable: false,hoverCursor: 'default' });
+          line2 = new fabric.Path(
+              'M -500 -500 Q 0 0 0 0 ',
+              { fill: '',
+                stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}),
+                strokeWidth: pathWidth(imageObjectsInCanvas[i].scaleX, imageObjectsInCanvas[j].scaleX),
+                objectCaching: false,
+                id:'generatedLine',
+                selectable: true,
+                hoverCursor: 'default',
+                hasControls: false,
+                lockMovementX: true,
+                lockMovementY: true,
+              });
+
           line2.path[0][1] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x;
           line2.path[0][2] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').y;
           line2.path[1][1] = getRandomValue(imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x, imageObjectsInCanvas[j].getPointByOrigin('center', 'center').x);
@@ -429,55 +442,55 @@ function getRandomValue(valueX, valueY) {
 
 var imgArrayNature = [
   {
-    img : '/assets/nature/tree1.png',id: "ele1", alt: 'Tree image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree1.png',id: "ele1", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/tree2.png',id: "ele2", alt: 'Tree2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree2.png',id: "ele2", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/tree3.png',id: "ele3", alt: 'Tree3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree3.png',id: "ele3", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/tree4.png',id: "ele4", alt: 'Tree4 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree4.png',id: "ele4", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone1.png',id: "ele5", alt: 'Stone1 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone1.png',id: "ele5", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone2.png',id: "ele6", alt: 'Stone2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone2.png',id: "ele6", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone3.png',id: "ele7", alt: 'Stone3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone3.png',id: "ele7", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone4.png',id: "ele8", alt: 'Stone4 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone4.png',id: "ele8", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone5.png',id: "ele9", alt: 'Stone5 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone5.png',id: "ele9", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton1.png',id: "ele10", alt: 'Skeleton1 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/skeleton1.png',id: "ele10", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton2.png',id: "ele11", alt: 'Skeleton2 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/skeleton2.png',id: "ele11", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton3.png',id: "ele12", alt: 'Skeleton3 image', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/skeleton3.png',id: "ele12", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 
 ]
 var imgArrayBuildings = [
   {
-    img : '/assets/buildings/house1.png',id: "ele1", alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house1.png',id: "ele1", alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/house2.png',id: "ele2", alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house2.png',id: "ele2", alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/house3.png',id: "ele3",  alt: 'house', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/house3.png',id: "ele3",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/buildings/shop1.png',id: "ele4",  alt: 'shop', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/buildings/shop1.png',id: "ele4",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
 
