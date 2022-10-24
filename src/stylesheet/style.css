@@ -64,6 +64,6 @@
 #div2{
     align-items: center;
 }
-#canvas{
+.canvas{
     border: 1px solid black;
 }

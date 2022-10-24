@@ -11,8 +11,18 @@ var canvas = new fabric.Canvas('canvas', {
   imageSmoothingEnabled: false
 });
 
+// canvas.add(new fabric.Rect({
+//   width: canvas.getWidth(),
+//   height: canvas.getHeight(),
+//   fill: "",
+//   stroke: "red",
+//   strokeWidth: 4,
+//   selectable:false
+// }));
+
 let mousePressed = false;
 let currentMode;
+let viewTransFormPre = canvas.viewportTransform;
 
 const modes = {
   draw: 'draw',
@@ -283,7 +293,7 @@ const setEvent = (canvas) => {
     opt.e.preventDefault()
     opt.e.stopPropagation()
 
-    canvas.renderAll()
+    canvas.enderAll()
     canvas.calcOffset()
   });
 
@@ -360,18 +370,25 @@ let generateLineBetweenObjects = () => {
         if (distance < 500) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
           imageObjectsInCanvas[i].setCoords();
-
-          console.log(imageObjectsInCanvas[i])
           imageObjectsInCanvas[j].setCoords();
+          let pathWidth = (iScaleX, jScaleX) => {
+            if(iScaleX > jScaleX){
+              return 12 * 10**(iScaleX);
+            } else {
+              return 12 * 10**(jScaleX);
+            }
+          }
 
-          line2 = new fabric.Path('M 200 250 Q 350 250 550 250 ', { fill: '', stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}), strokeWidth: 10, objectCaching: false, id:'generatedLine', selectable: false });
-          line2.path[0][1] = imageObjectsInCanvas[i].getCenterPoint().x;
-          line2.path[0][2] = imageObjectsInCanvas[i].getCenterPoint().y;
-          line2.path[1][1] = getRandomValue(imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().x);
-          line2.path[1][2] = (imageObjectsInCanvas[j].getCenterPoint().y + imageObjectsInCanvas[j].getCenterPoint().y)/2 ;
-          line2.path[1][3] = imageObjectsInCanvas[j].getCenterPoint().x;
-          line2.path[1][4] = imageObjectsInCanvas[j].getCenterPoint().y;
-          canvas.add(line2)
+          //console.log(imageObjectsInCanvas[i].getPointByOrigin('center', 'top').x)
+          line2 = new fabric.Path('M -500 -500 Q 0 0 0 0 ', { fill: '', stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}), strokeWidth: pathWidth(imageObjectsInCanvas[i].scaleX, imageObjectsInCanvas[j].scaleX), objectCaching: false, id:'generatedLine', selectable: false,hoverCursor: 'default' });
+          line2.path[0][1] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x;
+          line2.path[0][2] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').y;
+          line2.path[1][1] = getRandomValue(imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x, imageObjectsInCanvas[j].getPointByOrigin('center', 'center').x);
+          line2.path[1][2] = (imageObjectsInCanvas[i].getPointByOrigin('center', 'center').y + imageObjectsInCanvas[j].getPointByOrigin('center', 'center').y)/2 ;
+          line2.path[1][3] = imageObjectsInCanvas[j].getPointByOrigin('center', 'center').x;
+          line2.path[1][4] = imageObjectsInCanvas[j].getPointByOrigin('center', 'center').y;
+          fabric.Polyline.prototype._setPositionDimensions.call(line2, {});
+          canvas.add(line2);
 
           // just a straight line between the two objects
           // let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
@@ -479,7 +496,10 @@ setEvent(canvas);
 let saveCanvasAsImg = () => {
   canvas.setWidth(2000);
   canvas.setHeight(2000);
+  canvas.imageSmoothingEnabled = false;
+  let oldZoom = canvas.getZoom();
   canvas.calcOffset();
+  canvas.setViewportTransform(viewTransFormPre);
   let canvasURl = canvas.toDataURL(`png`,1);
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
@@ -493,7 +513,7 @@ let saveCanvasAsImg = () => {
   //    width: 2000,
   //     height: 2000
   //  });
-
+  canvas.imageSmoothingEnabled = true;
   canvas.setWidth(700);
   canvas.setHeight(700);
   canvas.calcOffset();
