@@ -57,12 +57,18 @@
     justify-content: space-between;
 }
 .img{
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     scale: 100%;
 }
 #div2{
     align-items: center;
+}
+.placeableObjectDiv{
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:500px;
+    width: 150px;
 }
 .canvas{
     border: 1px solid black;

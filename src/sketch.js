@@ -353,7 +353,7 @@ let sortingAlgorithm = () => {
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
-    }
+    } 
 
   }
 }
