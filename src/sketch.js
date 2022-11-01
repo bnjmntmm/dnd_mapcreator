@@ -10,15 +10,40 @@ var canvas = new fabric.Canvas('canvas', {
   enableRetinaScaling: true,
   imageSmoothingEnabled: false
 });
+save();
 
-// canvas.add(new fabric.Rect({
-//   width: canvas.getWidth(),
-//   height: canvas.getHeight(),
-//   fill: "",
-//   stroke: "red",
-//   strokeWidth: 4,
-//   selectable:false
-// }));
+//REDO UNDO
+canvas.counter = 0;
+
+undoButton = document.getElementById('undo');
+redoButton = document.getElementById('redo');
+var state;
+var undo = [];
+var redo = [];
+function save(){
+  if(state){
+    undo.push(state);
+  }
+  state = JSON.stringify(canvas);
+}
+function replay(playStack,saveStack, buttonsOn, buttonsOff){
+  saveStack.push(state);
+  state = playStack.pop();
+  var on = buttonsOn;
+  var off = buttonsOff;
+  on.disabled = true;
+  off.disabled = true;
+  canvas.clear()
+  canvas.loadFromJSON(state, function(){
+    canvas.renderAll();
+    on.disabled = false;
+    if(playStack.length){
+      off.disabled = false;
+    }
+  });
+}
+
+
 
 let mousePressed = false;
 let currentMode;
@@ -187,7 +212,7 @@ function dropElement(e) {
     mt: false,
   });
   canvas.add(img);
-
+  save();
   let listItem = document.createElement('li');
   listItem.innerText = img.alt;
   placesList.appendChild(listItem);
@@ -305,12 +330,13 @@ const setEvent = (canvas) => {
     path.hoverCursor = 'default';
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
     sortingAlgorithm();
-
+    save();
     });
   var maxScaleX = 1;
   var maxScaleY = 1;
 
   canvas.on('object:modified', function(e) {
+    save();
     if(e.target.type === 'image'){
       if(e.target.scaleX > maxScaleX){
         e.target.scaleX = maxScaleX;
@@ -327,9 +353,6 @@ const setEvent = (canvas) => {
     }
   });
   canvas.on('object:added', function (obj){
-    if(obj.target.type === 'image'){
-      //console.log(obj.target.getCenterPoint());
-    }
   });
 
 
@@ -523,7 +546,7 @@ let saveCanvasAsImg = () => {
   let oldZoom = canvas.getZoom();
   canvas.calcOffset();
   canvas.setViewportTransform(viewTransFormPre);
-  let canvasURl = canvas.toDataURL(`png`,1);
+  let canvasURl = canvas.toDataURL(`png`,1, {multiplier: 3});
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
