@@ -562,7 +562,7 @@ let saveCanvasAsImg = () => {
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
-  createEl.download = 'createdMap.png';
+  createEl.download = 'createdMap.jpeg';
   createEl.click();
   createEl.remove();
   //  canvas.svgViewportTransformation = true;
