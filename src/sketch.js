@@ -10,19 +10,19 @@ var canvas = new fabric.Canvas('canvas', {
   enableRetinaScaling: true,
   imageSmoothingEnabled: false
 });
+
+let undoButton = document.getElementById('undo');
+let redoButton = document.getElementById('redo');
 save();
-
-//REDO UNDO
-canvas.counter = 0;
-
-undoButton = document.getElementById('undo');
-redoButton = document.getElementById('redo');
 var state;
 var undo = [];
 var redo = [];
 function save(){
+  redo = [];
+  redoButton.disabled = true;
   if(state){
     undo.push(state);
+    undoButton.disabled = false;
   }
   state = JSON.stringify(canvas);
 }
@@ -47,7 +47,7 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
 
 let mousePressed = false;
 let currentMode;
-let viewTransFormPre = canvas.viewportTransform;
+// let viewTransFormPre = canvas.viewportTransform;
 
 const modes = {
   draw: 'draw',
@@ -212,10 +212,11 @@ function dropElement(e) {
     mt: false,
   });
   canvas.add(img);
+
+  // let listItem = document.createElement('li');
+  // listItem.innerText = img.alt;
+  // placesList.appendChild(listItem);
   save();
-  let listItem = document.createElement('li');
-  listItem.innerText = img.alt;
-  placesList.appendChild(listItem);
 }
 
 
@@ -336,7 +337,7 @@ const setEvent = (canvas) => {
   var maxScaleY = 1;
 
   canvas.on('object:modified', function(e) {
-    save();
+
     if(e.target.type === 'image'){
       if(e.target.scaleX > maxScaleX){
         e.target.scaleX = maxScaleX;
@@ -351,8 +352,10 @@ const setEvent = (canvas) => {
       this.lastGoodTop = e.target.top;
       this.lastGoodLeft = e.target.left;
     }
+    save();
   });
   canvas.on('object:added', function (obj){
+    //save();
   });
 
 
@@ -440,7 +443,7 @@ let generateLineBetweenObjects = () => {
           // canvas.add(line);
 
           sortingAlgorithm();
-
+          save();
         }
       }
       }
@@ -539,14 +542,23 @@ setEvent(canvas);
 
 
 
+
 let saveCanvasAsImg = () => {
-  canvas.setWidth(2000);
-  canvas.setHeight(2000);
+  canvas.setWidth(1000);
+  canvas.setHeight(1000);
   canvas.imageSmoothingEnabled = false;
   let oldZoom = canvas.getZoom();
+
+  canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
   canvas.calcOffset();
-  canvas.setViewportTransform(viewTransFormPre);
-  let canvasURl = canvas.toDataURL(`png`,1, {multiplier: 3});
+
+
+  let canvasURl = canvas.toDataURL({
+    format: 'jpeg',
+    quality: 1,
+    multiplier: 4,
+    enableRetinaScaling: true
+  });
   const createEl = document.createElement('a');
   createEl.href = canvasURl;
 
