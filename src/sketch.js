@@ -35,6 +35,30 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
   off.disabled = true;
   canvas.clear()
   canvas.loadFromJSON(state, function(){
+    let objects = canvas.getObjects();
+    for(let i = 0; i < objects.length; i++){
+    if(objects[i].type === 'image' ) {
+      let imagePathArray = objects[i].src.split('/');
+      if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
+        objects[i].setControlsVisibility({
+          mb: false,
+          ml: false,
+          mr: false,
+          mt: false,
+        });
+        objects[i].alt = 'building';
+      }
+    }
+      else if(objects[i].type = 'path' && objects[i].strokeLineCap === 'butt'){
+
+        objects[i].selectable = false;
+        objects[i].hoverCursor = 'default';
+        objects[i].hasControls = false;
+        objects[i].lockMovementX = true;
+        objects[i].lockMovementY = true;
+        objects[i].id = 'generatedLine';
+      }
+    }
     canvas.renderAll();
     on.disabled = false;
     if(playStack.length){
@@ -54,8 +78,8 @@ const modes = {
 }
 
 const openNav = () => {
-  document.getElementById("leftSidebar").style.width = "250px";
-  document.getElementById("parent").style.marginRight = "250px";
+  document.getElementById("leftSidebar").style.width = "250px"
+  document.getElementById("parent").style.marginRight = "250px"
 }
 const closeNav = () => {
   document.getElementById("leftSidebar").style.width = "0";
@@ -385,13 +409,14 @@ let sortingAlgorithm = () => {
 }
 
 let generateLineBetweenObjects = () => {
+  removeGeneratedLines();
   let distance = 0;
   //let points = [];
   let line2;
   let imageObjectsInCanvas = canvas.getObjects('image');
   for (let i = 0; i < imageObjectsInCanvas.length; i++) {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
-      if ((imageObjectsInCanvas[i].alt === 'building' && imageObjectsInCanvas[j].alt === 'building') &&  (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j])) {
+      if ((imageObjectsInCanvas[i].alt === 'building' && imageObjectsInCanvas[j].alt === 'building') && (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j])) {
         distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
         if (distance < 500) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
@@ -413,7 +438,7 @@ let generateLineBetweenObjects = () => {
                 strokeWidth: pathWidth(imageObjectsInCanvas[i].scaleX, imageObjectsInCanvas[j].scaleX),
                 objectCaching: false,
                 id:'generatedLine',
-                selectable: true,
+                selectable: false,
                 hoverCursor: 'default',
                 hasControls: false,
                 lockMovementX: true,
@@ -441,7 +466,6 @@ let generateLineBetweenObjects = () => {
           //   repeat: 'no-repeat',
           // }));
           // canvas.add(line);
-
           sortingAlgorithm();
           save();
         }
@@ -452,6 +476,16 @@ let generateLineBetweenObjects = () => {
 
 
   };
+
+
+let removeGeneratedLines = () => {
+  let objectsInCanvas = canvas.getObjects();
+  for (let i = 0; i < objectsInCanvas.length; i++) {
+    if (objectsInCanvas[i].id === 'generatedLine') {
+      canvas.remove(objectsInCanvas[i]);
+    }
+  }
+}
 
 function getRandomValue(valueX, valueY) {
     if(valueX < valueY){
