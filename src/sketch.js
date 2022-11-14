@@ -211,6 +211,32 @@ function dragElement(e) {
   e.dataTransfer.setData("id", e.target.id); //transfer the "data" i.e. id of the target dragged.
 }
 
+let createNewCircle = (elem) => {
+  let newLeft;
+  let newTop;
+  let elemName = elem.getSrc().split('/')[5];
+  if(elemName === 'house1.png'){
+    newLeft = elem.left +60;
+    newTop = elem.top +40;
+  } else if(elemName === 'house2.png'){
+    newLeft = elem.left +60;
+    newTop = elem.top +40;
+  } else if(elemName === 'house3.png'){
+    newLeft = elem.left +26;
+    newTop = elem.top +75;
+  } else if(elemName === 'shop1.png'){
+    newLeft = elem.left +100;
+    newTop = elem.top +100;
+  }
+  let circle = new fabric.Circle({
+    radius: 10,
+    fill: '#ff0000',
+    left: newLeft,
+    top: newTop
+  });
+  return circle;
+
+}
 let placesList = document.getElementById('placedObjectList');
 
 function dropElement(e) {
@@ -225,9 +251,15 @@ function dropElement(e) {
     alt: imag.alt,
   //  layer: 1,
   });
+  if(img.getSrc().split('/')[5] === 'shop1.png'){
+    img.scaleToWidth(imag.width*2); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
+    img.scaleToHeight(imag.height*2);
+  } else{
+    img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
+    img.scaleToHeight(imag.height);
+  }
 
-  img.scaleToWidth(imag.width); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
-  img.scaleToHeight(imag.height);
+
   img.minScaleLimit = 0.05;
   img.setControlsVisibility({
     mb: false,
@@ -235,7 +267,23 @@ function dropElement(e) {
     mr: false,
     mt: false,
   });
-  canvas.add(img);
+  let circle = createNewCircle(img);
+  let group = new fabric.Group([img, circle],
+      {
+        originX: 'center',
+        originY: 'center',
+        left: img.left,
+        top: img.top,
+
+      });
+  group.setControlsVisibility({
+    mb: false,
+    ml: false,
+    mr: false,
+    mt: false,
+  });
+  group.name = 'houseGroup';
+  canvas.add(group);
 
   // let listItem = document.createElement('li');
   // listItem.innerText = img.alt;
@@ -357,12 +405,15 @@ const setEvent = (canvas) => {
     sortingAlgorithm();
     save();
     });
-  var maxScaleX = 1;
-  var maxScaleY = 1;
+  var maxScaleX = 2;
+  var maxScaleY = 2;
 
   canvas.on('object:modified', function(e) {
+    if(e.target.type === 'group'){
 
-    if(e.target.type === 'image'){
+    }
+
+    if(e.target.item(0).type === 'image'){
       if(e.target.scaleX > maxScaleX){
         e.target.scaleX = maxScaleX;
         e.target.left = this.lastGoodLeft;
@@ -399,7 +450,7 @@ const setEvent = (canvas) => {
 let sortingAlgorithm = () => {
   for(var i = 0; i < canvas.getObjects().length; i++){
     if(canvas.item(i).type === 'path' || canvas.item(i).id === 'generatedLine'){
-      while(i>0 && canvas.item(i-1).type === 'image'){
+      while(i>0 && canvas.item(i-1).name === 'houseGroup'){
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
@@ -407,21 +458,30 @@ let sortingAlgorithm = () => {
 
   }
 }
+let intersectionAvoider = (path) => {
+  let imageInCanvas = canvas.getObjects().filter((obj) => obj.name === 'houseGroup');
+
+  for(let i = 0; i < imageInCanvas.length; i++){
+    console.log(path.intersectsWithObject(imageInCanvas[i]));
+  }
+}
+
 
 let generateLineBetweenObjects = () => {
   removeGeneratedLines();
   let distance = 0;
   //let points = [];
   let line2;
-  let imageObjectsInCanvas = canvas.getObjects('image');
+  let imageObjectsInCanvas = canvas.getObjects().filter(obj => obj.name === 'houseGroup');
   for (let i = 0; i < imageObjectsInCanvas.length; i++) {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
-      if ((imageObjectsInCanvas[i].alt === 'building' && imageObjectsInCanvas[j].alt === 'building') && (imageObjectsInCanvas[i] !== imageObjectsInCanvas[j])) {
-        distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
+      if ((imageObjectsInCanvas[i].item(0).alt === 'building' && imageObjectsInCanvas[j].item(0).alt === 'building') && (imageObjectsInCanvas[i].item(0) !== imageObjectsInCanvas[j].item(0))) {
+        distance = imageObjectsInCanvas[i].item(0).getCenterPoint().distanceFrom(imageObjectsInCanvas[j].item(0).getCenterPoint());
+
         if (distance < 500) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
-          imageObjectsInCanvas[i].setCoords();
-          imageObjectsInCanvas[j].setCoords();
+          imageObjectsInCanvas[i].item(0).setCoords();
+          imageObjectsInCanvas[j].item(0).setCoords();
           let pathWidth = (iScaleX, jScaleX) => {
             if(iScaleX > jScaleX){
               return 12 * 10**(iScaleX);
@@ -435,7 +495,7 @@ let generateLineBetweenObjects = () => {
               'M -500 -500 Q 0 0 0 0 ',
               { fill: '',
                 stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}),
-                strokeWidth: pathWidth(imageObjectsInCanvas[i].scaleX, imageObjectsInCanvas[j].scaleX),
+                strokeWidth: 10,
                 objectCaching: false,
                 id:'generatedLine',
                 selectable: false,
@@ -445,27 +505,21 @@ let generateLineBetweenObjects = () => {
                 lockMovementY: true,
               });
 
-          line2.path[0][1] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x;
-          line2.path[0][2] = imageObjectsInCanvas[i].getPointByOrigin('center', 'center').y;
+          var matrix1Start = imageObjectsInCanvas[i].item(1).calcTransformMatrix();
+          var matrix2Start = imageObjectsInCanvas[j].item(1).calcTransformMatrix();
+          var finalValues1 = fabric.util.qrDecompose(matrix1Start);
+          var finalValues2 = fabric.util.qrDecompose(matrix2Start);
+          line2.path[0][1] = finalValues1.translateX;
+          line2.path[0][2] = finalValues1.translateY;
           line2.path[1][1] = getRandomValue(imageObjectsInCanvas[i].getPointByOrigin('center', 'center').x, imageObjectsInCanvas[j].getPointByOrigin('center', 'center').x);
           line2.path[1][2] = (imageObjectsInCanvas[i].getPointByOrigin('center', 'center').y + imageObjectsInCanvas[j].getPointByOrigin('center', 'center').y)/2 ;
-          line2.path[1][3] = imageObjectsInCanvas[j].getPointByOrigin('center', 'center').x;
-          line2.path[1][4] = imageObjectsInCanvas[j].getPointByOrigin('center', 'center').y;
+          line2.path[1][3] = finalValues2.translateX;
+          line2.path[1][4] = finalValues2.translateY;
           fabric.Polyline.prototype._setPositionDimensions.call(line2, {});
-          canvas.add(line2);
 
-          // just a straight line between the two objects
-          // let line = new fabric.Line([imageObjectsInCanvas[i].getCenterPoint().x, imageObjectsInCanvas[i].getCenterPoint().y, imageObjectsInCanvas[j].getCenterPoint().x, imageObjectsInCanvas[j].getCenterPoint().y], {
-          //   strokeWidth: 20,
-          //   id: 'generatedLine',
-          //   objectCaching: false,
-          //   selectable: false,
-          // });
-          // line.set('stroke', new fabric.Pattern({
-          //   source: pathBrushImg,
-          //   repeat: 'no-repeat',
-          // }));
-          // canvas.add(line);
+          intersectionAvoider(line2);
+
+          canvas.add(line2);
           sortingAlgorithm();
           save();
         }
