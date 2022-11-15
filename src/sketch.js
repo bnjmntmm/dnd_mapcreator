@@ -211,6 +211,24 @@ function dragElement(e) {
   e.dataTransfer.setData("id", e.target.id); //transfer the "data" i.e. id of the target dragged.
 }
 
+
+let placeCircle = () => {
+  let circle = new fabric.Circle({
+    radius: 10,
+    fill: '#C2B280',
+    left: canvas.width/2,
+    top: canvas.height/2,
+    selectable: true,
+    hasControls: false,
+    lockMovementX: false,
+    lockMovementY: false,
+    id: 'numberedCircle',
+    snapped: false,
+  });
+  canvas.add(circle);
+  canvas.renderAll();
+}
+
 let createNewCircle = (elem) => {
   let newLeft;
   let newTop;
@@ -274,6 +292,8 @@ function dropElement(e) {
         originY: 'center',
         left: img.left,
         top: img.top,
+        // snappedTo: false,
+        // snapID: null,
 
       });
   group.setControlsVisibility({
@@ -409,11 +429,10 @@ const setEvent = (canvas) => {
   var maxScaleY = 2;
 
   canvas.on('object:modified', function(e) {
-    if(e.target.type === 'group'){
+    if(e.target.id === 'numberedCircle'){
 
     }
-
-    if(e.target.item(0).type === 'image'){
+    else if(e.target.item(0).type === 'image' && e.target.name === 'houseGroup'){
       if(e.target.scaleX > maxScaleX){
         e.target.scaleX = maxScaleX;
         e.target.left = this.lastGoodLeft;
@@ -426,35 +445,76 @@ const setEvent = (canvas) => {
       }
       this.lastGoodTop = e.target.top;
       this.lastGoodLeft = e.target.left;
+
     }
     save();
   });
   canvas.on('object:added', function (obj){
     //save();
   });
-
-
-
-
-  //snapping to grid -> feels laggy.. maybe only for drawing
-  // canvas.on('object:moving', function(options) {
-  //   options.target.set({
-  //     left: Math.round(options.target.left / grid) * grid,
-  //     top: Math.round(options.target.top / grid) * grid
-  //   });
+  // canvas.on('object:rotating', function (obj){
+  //   if(obj.target.name === 'houseGroup'){
+  //     var ang = obj.target.angle % 360;
+  //     if(ang < 270) {
+  //       if(ang > 180){
+  //         ang = obj.target.angle % 180;
+  //       } else if(ang > 90){
+  //         ang = obj.target.angle % 90;
+  //       }
+  //     }
+  //     if(obj.target.snappedTo && obj.target.snapID !== null){
+  //
+  //       let item = canvas.item(obj.target.snapID);
+  //       item.setAngle(ang);
+  //     }
+  //
+  //   }
   // });
+//snapzone
 
+  //TODO: Group the circle with text for Legende
+  var snapzone = 50;
+  canvas.on('object:moving', function (e) {
+    let houseGroupArray = canvas.getObjects().filter(obj => obj.name === 'houseGroup');
+
+    if (e.target.id === 'numberedCircle') {
+      var circleMiddlePoints = e.target.getCenterPoint();
+      for (let i = 0; i <houseGroupArray.length; i++) {
+        let houseGroup = houseGroupArray[i];
+        var houseGroupMiddlePoints = houseGroup.getCenterPoint();
+        if (Math.round(circleMiddlePoints.x) > Math.round(houseGroupMiddlePoints.x) - snapzone && Math.round(circleMiddlePoints.x) <  Math.round(houseGroupMiddlePoints.x) + snapzone
+        && Math.round(circleMiddlePoints.y) > Math.round(houseGroupMiddlePoints.y) - snapzone && Math.round(circleMiddlePoints.y) <  Math.round(houseGroupMiddlePoints.y) + snapzone) {
+          e.target.set({
+            left: houseGroup.oCoords.tl.x ,
+            top: houseGroup.oCoords.tl.y
+          }).setCoords();
+
+        sortingAlgorithm();
+        // houseGroup.snappedTo = true;
+        // houseGroup.snapID = getZIndex(e.target);
+        }
+        // houseGroup.snappedTo = false;
+      }
+    }
+  });
 
 }
+
+
 
 let sortingAlgorithm = () => {
   for(var i = 0; i < canvas.getObjects().length; i++){
     if(canvas.item(i).type === 'path' || canvas.item(i).id === 'generatedLine'){
-      while(i>0 && canvas.item(i-1).name === 'houseGroup'){
+      while(i>0 && (canvas.item(i-1).name === 'houseGroup' || canvas.item(i-1).id === 'numberedCircle')){
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
-    } 
+    } else if(canvas.item(i).name === 'houseGroup'){
+      while(i>0 && canvas.item(i-1).id === 'numberedCircle'){
+        canvas.moveTo(canvas.item(i), i-1)
+        i = i-1;
+      }
+    }
 
   }
 }
@@ -517,7 +577,7 @@ let generateLineBetweenObjects = () => {
           line2.path[1][4] = finalValues2.translateY;
           fabric.Polyline.prototype._setPositionDimensions.call(line2, {});
 
-          intersectionAvoider(line2);
+         // intersectionAvoider(line2);
 
           canvas.add(line2);
           sortingAlgorithm();
