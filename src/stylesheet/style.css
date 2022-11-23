@@ -1,3 +1,4 @@
+body {background-color: #161c2c;}
 
 .sidebar {
     height: 100%;
@@ -11,10 +12,83 @@
     transition: 0.5s;
     padding-top: 60px;
 }
+.box {
+    position: absolute;
+    height: 170px;
+    width: 60px;
+    padding: 20px;
+    margin-left: 20%;
+    border: 5px solid #ffb564;
+    background-color: #7d8339;
+}
+
+.box a{
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    padding: 5px;
+    margin-left: 10%;
+    margin-top: 10%;
+    border: 5px solid #ffb564;
+    background-color: #1d2a0f;
+}
+
+#togglePathID.buttonDesign{
+    background: transparent;
+    margin-left: 0px;
+    margin-top: 0px;
+    border: none;
+ }
+
+#toggleGrassID.buttonDesign{
+    background: transparent;
+}
+
+#toggleWaterID.buttonDesign{
+    background: transparent;
+}
+
+.slideContainer{
+    width: 100%; /* Width of the outside container */
+    transform: rotate(270deg); /* Drehung des containers */
+}
+
+/* The slider itself */
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px; /* Rundheit der Kanten */
+    background: #ffb564;
+    outline: none;
+    opacity: 0.5;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #5b8299;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #5b8299;
+    cursor: pointer;
+}
+
+
 .sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 20px;
     color: #818181;
     display: block;
     transition: 0.3s;
@@ -30,7 +104,6 @@
     margin-left: 50px;
 }
 .buttonDesign {
-    font-size: 20px;
     cursor: pointer;
     background-color: #111;
     color: white;
@@ -43,15 +116,18 @@
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     justify-items: center;
-    background-color: #f1f1f1;
+    background-color: #161c2c;
     gap: 16px;
 }
-
+/* { grid-area: x / y / z / v; }
+x = Reihe, y = Spalte, z = Spanne/Breite, v = Höhe */
+.freeDrawingBrushes { grid-area: 1/1/1/1;}
 .div1 { grid-area: 1 / 1 / 2 / 2; }
 .div2 { grid-area: 1 / 2 / 2 / 3; }
 .div3 { grid-area: 1 / 3 / 2 / 4; }
 
 .img_cont {
+    margin-top: 5%;
     margin-left: 20%;
     margin-right: 20%;
     justify-content: space-between;
@@ -71,5 +147,5 @@
     width: 150px;
 }
 .canvas{
-    border: 1px solid black;
+    border: 7px solid #ffb564;
 }
