@@ -37,18 +37,18 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
   canvas.loadFromJSON(state, function(){
     let objects = canvas.getObjects();
     for(let i = 0; i < objects.length; i++){
-    if(objects[i].type === 'image' ) {
-      let imagePathArray = objects[i].src.split('/');
-      if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
-        objects[i].setControlsVisibility({
-          mb: false,
-          ml: false,
-          mr: false,
-          mt: false,
-        });
-        objects[i].alt = 'building';
+      if(objects[i].type === 'image' ) {
+        let imagePathArray = objects[i].src.split('/');
+        if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
+          objects[i].setControlsVisibility({
+            mb: false,
+            ml: false,
+            mr: false,
+            mt: false,
+          });
+          objects[i].alt = 'building';
+        }
       }
-    }
       else if(objects[i].type = 'path' && objects[i].strokeLineCap === 'butt'){
 
         objects[i].selectable = false;
@@ -175,10 +175,10 @@ const togglePen = (mode, activeBrush) => {
         canvas.isDrawingMode = true;
       } else if(activeBrush === 'path') {
 
-          currentBrush = 'path';
-          canvas.freeDrawingBrush = pathPatternBrush;
-          canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-          canvas.isDrawingMode = true;
+        currentBrush = 'path';
+        canvas.freeDrawingBrush = pathPatternBrush;
+        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+        canvas.isDrawingMode = true;
       } else if(activeBrush === 'water'){
         currentBrush = 'water';
         canvas.freeDrawingBrush = waterPatternBrush;
@@ -197,7 +197,7 @@ const fillCanvas = (backgroundColor) => {
   if(backgroundColor === 'path') {
     canvas.setBackgroundColor({source: pathBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas)
     );
-    } else if(backgroundColor === 'grass') {
+  } else if(backgroundColor === 'grass') {
     canvas.setBackgroundColor({source: grassBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas));
   }
 }
@@ -245,6 +245,9 @@ let createNewCircle = (elem) => {
   } else if(elemName === 'shop1.png'){
     newLeft = elem.left +100;
     newTop = elem.top +100;
+  } else{
+    newLeft = elem.left
+    newTop = elem.top
   }
   let circle = new fabric.Circle({
     radius: 10,
@@ -258,6 +261,7 @@ let createNewCircle = (elem) => {
 let placesList = document.getElementById('placedObjectList');
 
 function dropElement(e) {
+
   context.globalCompositeOperation = 'source-over';
   e.preventDefault();
   var data = e.dataTransfer.getData("id"); //receiving the "data" i.e. id of the target dropped.
@@ -267,7 +271,7 @@ function dropElement(e) {
     top: e.layerY - 30,
     type: 'image',
     alt: imag.alt,
-  //  layer: 1,
+    //  layer: 1,
   });
   if(img.getSrc().split('/')[5] === 'shop1.png'){
     img.scaleToWidth(imag.width*2); //scaling the image height and width with target height and width, scaleToWidth, scaleToHeight fabric inbuilt function.
@@ -285,25 +289,47 @@ function dropElement(e) {
     mr: false,
     mt: false,
   });
-  let circle = createNewCircle(img);
-  let group = new fabric.Group([img, circle],
-      {
-        originX: 'center',
-        originY: 'center',
-        left: img.left,
-        top: img.top,
-        // snappedTo: false,
-        // snapID: null,
+  if(img.alt === 'building'){
+    let circle = createNewCircle(img);
+    let group = new fabric.Group([img, circle],
+        {
+          originX: 'center',
+          originY: 'center',
+          left: img.left,
+          top: img.top,
+          // snappedTo: false,
+          // snapID: null,
 
-      });
-  group.setControlsVisibility({
-    mb: false,
-    ml: false,
-    mr: false,
-    mt: false,
-  });
-  group.name = 'houseGroup';
-  canvas.add(group);
+        });
+    group.setControlsVisibility({
+      mb: false,
+      ml: false,
+      mr: false,
+      mt: false,
+    });
+    group.name = 'houseGroup';
+    canvas.add(group);
+  } else if(img.alt === 'nature'){
+    let group = new fabric.Group([img],
+        {
+          originX: 'center',
+          originY: 'center',
+          left: img.left,
+          top: img.top,
+          // snappedTo: false,
+          // snapID: null,
+
+        });
+    group.setControlsVisibility({
+      mb: false,
+      ml: false,
+      mr: false,
+      mt: false,
+    });
+    group.name = 'natureGroup';
+    canvas.add(group);
+  }
+
 
   // let listItem = document.createElement('li');
   // listItem.innerText = img.alt;
@@ -424,7 +450,7 @@ const setEvent = (canvas) => {
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
     sortingAlgorithm();
     save();
-    });
+  });
   var maxScaleX = 2;
   var maxScaleY = 2;
 
@@ -483,15 +509,15 @@ const setEvent = (canvas) => {
         let houseGroup = houseGroupArray[i];
         var houseGroupMiddlePoints = houseGroup.getCenterPoint();
         if (Math.round(circleMiddlePoints.x) > Math.round(houseGroupMiddlePoints.x) - snapzone && Math.round(circleMiddlePoints.x) <  Math.round(houseGroupMiddlePoints.x) + snapzone
-        && Math.round(circleMiddlePoints.y) > Math.round(houseGroupMiddlePoints.y) - snapzone && Math.round(circleMiddlePoints.y) <  Math.round(houseGroupMiddlePoints.y) + snapzone) {
+            && Math.round(circleMiddlePoints.y) > Math.round(houseGroupMiddlePoints.y) - snapzone && Math.round(circleMiddlePoints.y) <  Math.round(houseGroupMiddlePoints.y) + snapzone) {
           e.target.set({
             left: houseGroup.oCoords.tl.x ,
             top: houseGroup.oCoords.tl.y
           }).setCoords();
 
-        sortingAlgorithm();
-        // houseGroup.snappedTo = true;
-        // houseGroup.snapID = getZIndex(e.target);
+          sortingAlgorithm();
+          // houseGroup.snappedTo = true;
+          // houseGroup.snapID = getZIndex(e.target);
         }
         // houseGroup.snappedTo = false;
       }
@@ -577,19 +603,19 @@ let generateLineBetweenObjects = () => {
           line2.path[1][4] = finalValues2.translateY;
           fabric.Polyline.prototype._setPositionDimensions.call(line2, {});
 
-         // intersectionAvoider(line2);
+          // intersectionAvoider(line2);
 
           canvas.add(line2);
           sortingAlgorithm();
           save();
         }
       }
-      }
     }
+  }
 
 
 
-  };
+};
 
 
 let removeGeneratedLines = () => {
@@ -602,15 +628,15 @@ let removeGeneratedLines = () => {
 }
 
 function getRandomValue(valueX, valueY) {
-    if(valueX < valueY){
-      let min = Math.ceil(valueX);
-      let max = Math.floor(valueY);
-      return Math.floor(Math.random() * (max - min) + min);
-    } else{
-      let min = Math.ceil(valueY);
-      let max = Math.floor(valueX);
-      return Math.floor(Math.random() * (max - min) + min);
-    }
+  if(valueX < valueY){
+    let min = Math.ceil(valueX);
+    let max = Math.floor(valueY);
+    return Math.floor(Math.random() * (max - min) + min);
+  } else{
+    let min = Math.ceil(valueY);
+    let max = Math.floor(valueX);
+    return Math.floor(Math.random() * (max - min) + min);
+  }
 
 }
 
