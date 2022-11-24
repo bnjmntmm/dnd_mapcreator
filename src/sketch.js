@@ -531,7 +531,7 @@ const setEvent = (canvas) => {
 let sortingAlgorithm = () => {
   for(var i = 0; i < canvas.getObjects().length; i++){
     if(canvas.item(i).type === 'path' || canvas.item(i).id === 'generatedLine'){
-      while(i>0 && (canvas.item(i-1).name === 'houseGroup' || canvas.item(i-1).id === 'numberedCircle')){
+      while(i>0 && (canvas.item(i-1).name === 'houseGroup' || canvas.item(i-1).id === 'numberedCircle' || canvas.item(i-1).name === 'natureGroup')){
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
@@ -543,6 +543,7 @@ let sortingAlgorithm = () => {
     }
 
   }
+  console.log(canvas.getObjects())
 }
 let intersectionAvoider = (path) => {
   let imageInCanvas = canvas.getObjects().filter((obj) => obj.name === 'houseGroup');

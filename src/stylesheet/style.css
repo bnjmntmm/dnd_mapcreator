@@ -122,7 +122,7 @@ body {background-color: #161c2c;}
 /* { grid-area: x / y / z / v; }
 x = Reihe, y = Spalte, z = Spanne/Breite, v = Höhe */
 .freeDrawingBrushes {
-    grid-area: 1/1/1/1;}
+    grid-area: 1/0/1/1;}
 .leftBoxes {
     grid-area: 1/1/1/1;}
 .div1 { grid-area: 1 / 1 / 2 / 2; }
