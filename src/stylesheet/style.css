@@ -1,4 +1,8 @@
-body {background-color: #161c2c;}
+/*node .\src\server.js*/
+
+body {background-color: #161c2c;
+    }
+
 
 .sidebar {
     height: 100%;
@@ -106,7 +110,7 @@ body {background-color: #161c2c;}
     margin-left: 50px;
 }
 .buttonDesign {
-    cursor: pointer;
+    cursor: url('/src/assets/Icons/cursor.gif'), default;
     background-color: #111;
     color: white;
     padding: 10px 15px;

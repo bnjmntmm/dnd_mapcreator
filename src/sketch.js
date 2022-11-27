@@ -135,7 +135,7 @@ const changeSelectableCategory = (object) => {
 //Brushs
 var grassBrushImg = new Image();
 grassBrushImg.objectCaching = false;
-grassBrushImg.src = '/assets/tiles/grass02.png';
+grassBrushImg.src = '/assets/tiles/grass03.png';
 grassBrushImg.alt = 'grassBrush';
 var grassPatternBrush = new fabric.PatternBrush(canvas);
 grassPatternBrush.source = grassBrushImg;
@@ -143,7 +143,7 @@ grassPatternBrush.source = grassBrushImg;
 var pathBrushImg = new Image();
 pathBrushImg.alt = 'pathBrush';
 pathBrushImg.objectCaching = false;
-pathBrushImg.src = '/assets/tiles/dirt02.png';
+pathBrushImg.src = '/assets/tiles/dirt03.png';
 // pathBrushImg.objectCaching = false;
 var pathPatternBrush = new fabric.PatternBrush(canvas);
 pathPatternBrush.source = pathBrushImg;
