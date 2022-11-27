@@ -1,14 +1,48 @@
+const keySequence = ['g', 'a', 'y'];
+let userInput = new Array(keySequence.length);
+function keyPress(e) {
+  userInput = [...userInput.slice(1), e.key];
+
+  if(keySequence.every((v,k) => v === userInput[k])) {
+    changeToGayMode();
+
+  }
+
+  var evtobj = window.event? event : e
+  if(evtobj.keyCode == 90 && evtobj.ctrlKey) {
+    replay(undo,redo,redoButton,undoButton)
+  } else if(evtobj.keyCode == 89 && evtobj.ctrlKey) {
+    replay(redo,undo,undoButton,redoButton)
+  } else if(evtobj.keyCode == 46){
+    deleteSelected(canvas.getActiveObject());
+  }
+
+}
+document.onkeydown = keyPress;
+
+
+let changeToGayMode = () => {
+  canvas.defaultCursor = 'url(/assets/icons/cursor/cursorgay.gif), auto';
+  document.body.style.cursor  = 'url(/assets/icons/cursor/cursorgay.gif), auto';
+}
+
+
+
+
+
 //fabric.maxCacheSideLimit = 11000;
 var webglBackend = new fabric.WebglFilterBackend();
 fabric.filterBackend = webglBackend;
 var canvas = new fabric.Canvas('canvas', {
-  backgroundColor: '#fff',
+  backgroundColor: '#ffcf9d',
   selection: false,
   stroke: 'green',
   strokeWidth: 50,
   preserveObjectStacking: true,
   enableRetinaScaling: true,
-  imageSmoothingEnabled: false
+  imageSmoothingEnabled: false,
+  defaultCursor: 'url(/assets/icons/cursor/rszcursor.png), auto',
+  hoverCursor: 'url(/assets/icons/cursor/rszcursor.png), auto',
 });
 
 let undoButton = document.getElementById('undo');
@@ -20,6 +54,7 @@ var redo = [];
 function save(){
   redo = [];
   redoButton.disabled = true;
+  undoButton.disabled = true;
   if(state){
     undo.push(state);
     undoButton.disabled = false;
@@ -52,7 +87,7 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
       else if(objects[i].type = 'path' && objects[i].strokeLineCap === 'butt'){
 
         objects[i].selectable = false;
-        objects[i].hoverCursor = 'default';
+        objects[i].hoverCursor = 'url(/assets/icons/cursor/cursorgay.gif)';
         objects[i].hasControls = false;
         objects[i].lockMovementX = true;
         objects[i].lockMovementY = true;
@@ -77,14 +112,14 @@ const modes = {
   draw: 'draw',
 }
 
-const openNav = () => {
-  document.getElementById("leftSidebar").style.width = "250px"
-  document.getElementById("parent").style.marginRight = "250px"
-}
-const closeNav = () => {
-  document.getElementById("leftSidebar").style.width = "0";
-  document.getElementById("parent").style.marginRight= "0";
-}
+// const openNav = () => {
+//   document.getElementById("leftSidebar").style.width = "250px"
+//   document.getElementById("parent").style.marginRight = "250px"
+// }
+// const closeNav = () => {
+//   document.getElementById("leftSidebar").style.width = "0";
+//   document.getElementById("parent").style.marginRight= "0";
+// }
 
 const selectedObject = {
   house : 'house',
@@ -103,30 +138,21 @@ var context = document.getElementById('canvas').getContext('2d');
 const changeSelectableCategory = (object) => {
   if(object === selectedObject.house){
     generateImage(selectedObject.house);
-    closeNav();
+    document.getElementById('imgFiller').style.borderColor = '#cb8b46';
 
   } else if(object === selectedObject.nature){
     generateImage(selectedObject.nature);
-    closeNav();
-
+    document.getElementById('imgFiller').style.borderColor = '#954822';
 
   } else if(object === selectedObject.barriers){
     generateImage(selectedObject.barriers);
-    closeNav();
-
-
+    document.getElementById('imgFiller').style.borderColor = '#ce812e';
   } else if(object === selectedObject.cityObject){
     generateImage(selectedObject.cityObject);
-    closeNav();
-
-  } else if(object === selectedObject.otherBuilding){
-    generateImage(selectedObject.otherBuilding);
-    closeNav();
-
+    document.getElementById('imgFiller').style.borderColor = '#ba5b2a';
   } else if(object === selectedObject.other){
     generateImage(selectedObject.other);
-    closeNav();
-
+    document.getElementById('imgFiller').style.borderColor = '#6a2d12';
   }
 }
 
@@ -163,42 +189,37 @@ penSlider.onchange = function() {
 }
 
 let currentBrush;
-const togglePen = (mode, activeBrush) => {
-  if(mode === modes.draw){
-    if(currentBrush !== activeBrush){
-
-      if(activeBrush === 'grass') {
-
-        currentBrush = 'grass';
-        canvas.freeDrawingBrush = grassPatternBrush;
-        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-        canvas.isDrawingMode = true;
-      } else if(activeBrush === 'path') {
-
-        currentBrush = 'path';
-        canvas.freeDrawingBrush = pathPatternBrush;
-        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-        canvas.isDrawingMode = true;
-      } else if(activeBrush === 'water'){
-        currentBrush = 'water';
-        canvas.freeDrawingBrush = waterPatternBrush;
-        canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-        canvas.isDrawingMode = true;
-      }
-    } else{
-      currentBrush = undefined;
-      canvas.isDrawingMode = false;
+let changeColorMode = (activeBrush) => {
+    if(activeBrush === 'grass') {
+      currentBrush = 'grass';
+      canvas.freeDrawingBrush = grassPatternBrush;
+      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+    } else if(activeBrush === 'path') {
+      currentBrush = 'path';
+      canvas.freeDrawingBrush = pathPatternBrush;
+      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+    } else if(activeBrush === 'water'){
+      currentBrush = 'water';
+      canvas.freeDrawingBrush = waterPatternBrush;
+      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
     }
-  }
-
-
 }
-const fillCanvas = (backgroundColor) => {
-  if(backgroundColor === 'path') {
+let toggleDrawing = () => {
+  if(currentBrush == undefined){
+    canvas.freeDrawingBrush = grassPatternBrush;
+    canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+  }
+  canvas.isDrawingMode = !canvas.isDrawingMode;
+}
+
+const fillCanvas = () => {
+  if(currentBrush === 'path') {
     canvas.setBackgroundColor({source: pathBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas)
     );
-  } else if(backgroundColor === 'grass') {
+  } else if(currentBrush === 'grass') {
     canvas.setBackgroundColor({source: grassBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas));
+  } else if(currentBrush === 'water'){
+    canvas.setBackgroundColor({source: waterBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas));
   }
 }
 // Bilder Droppen können
@@ -446,7 +467,7 @@ const setEvent = (canvas) => {
     var path = e.path;
     path.selectable = false;
     path.objectCaching = false;
-    path.hoverCursor = 'default';
+    path.hoverCursor = 'url(/assets/icons/cursor/cursorgay.gif)';
     //This is a fucking sorting algorithm for the path and images! and it took almost 4 hours to figure out how to do it!
     sortingAlgorithm();
     save();
@@ -478,6 +499,7 @@ const setEvent = (canvas) => {
   canvas.on('object:added', function (obj){
     //save();
   });
+
   // canvas.on('object:rotating', function (obj){
   //   if(obj.target.name === 'houseGroup'){
   //     var ang = obj.target.angle % 360;
@@ -543,7 +565,6 @@ let sortingAlgorithm = () => {
     }
 
   }
-  console.log(canvas.getObjects())
 }
 let intersectionAvoider = (path) => {
   let imageInCanvas = canvas.getObjects().filter((obj) => obj.name === 'houseGroup');
@@ -586,7 +607,7 @@ let generateLineBetweenObjects = () => {
                 objectCaching: false,
                 id:'generatedLine',
                 selectable: false,
-                hoverCursor: 'default',
+                hoverCursor: 'url(/assets/icons/cursor/cursorgay.gif)',
                 hasControls: false,
                 lockMovementX: true,
                 lockMovementY: true,
@@ -714,9 +735,6 @@ let generateImage = (obj) => {
 }
 
 setEvent(canvas);
-
-
-
 
 let saveCanvasAsImg = () => {
   canvas.setWidth(1000);
