@@ -29,12 +29,13 @@ let changeToGayMode = () => {
 
 
 
-
 //fabric.maxCacheSideLimit = 11000;
 var webglBackend = new fabric.WebglFilterBackend();
 fabric.filterBackend = webglBackend;
 var canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#ffcf9d',
+  width: 1000,
+  height: 1000,
   selection: false,
   stroke: 'green',
   strokeWidth: 50,
@@ -44,6 +45,14 @@ var canvas = new fabric.Canvas('canvas', {
   defaultCursor: 'url(/assets/icons/cursor/rszcursor.png), auto',
   hoverCursor: 'url(/assets/icons/cursor/rszcursor.png), auto',
 });
+
+var c = canvas.getElement(), upperCanvas = canvas.upperCanvasEl, container = canvas.upperCanvasEl.parentNode, width = '700px',  height = '700px';
+c.style.width = upperCanvas.style.width = container.style.width = width;
+c.style.height = upperCanvas.style.height = container.style.height = height;
+
+
+var placeBorder = new fabric.Rect({width: 995, height: 995, stroke:'#161c2c', strokeWidth: 10, fill: 'transparent', selectable: false});
+canvas.add(placeBorder);
 
 let undoButton = document.getElementById('undo');
 let redoButton = document.getElementById('redo');
@@ -210,9 +219,13 @@ let toggleDrawing = () => {
     canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
   }
   canvas.isDrawingMode = !canvas.isDrawingMode;
+  if(canvas.isDrawingMode === false){
+    changeBorderTool(document.getElementById('toolButtonSwitcherDrawn'));
+  }
 }
 
 const fillCanvas = () => {
+  canvas.isDrawingMode = false;
   if(currentBrush === 'path') {
     canvas.setBackgroundColor({source: pathBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas)
     );
@@ -221,6 +234,7 @@ const fillCanvas = () => {
   } else if(currentBrush === 'water'){
     canvas.setBackgroundColor({source: waterBrushImg.src, repeat: 'repeat'}, canvas.renderAll.bind(canvas));
   }
+  changeBorderTool(document.getElementById('toolButtonSwitcherFill'), true);
 }
 // Bilder Droppen können
 
@@ -255,24 +269,24 @@ let createNewCircle = (elem) => {
   let newTop;
   let elemName = elem.getSrc().split('/')[5];
   if(elemName === 'house1.png'){
-    newLeft = elem.left +60;
+    newLeft = elem.left +27;
     newTop = elem.top +40;
   } else if(elemName === 'house2.png'){
-    newLeft = elem.left +60;
+    newLeft = elem.left +27;
     newTop = elem.top +40;
   } else if(elemName === 'house3.png'){
-    newLeft = elem.left +26;
-    newTop = elem.top +75;
+     newLeft = elem.left+70;
+     newTop = elem.top+175;
   } else if(elemName === 'shop1.png'){
-    newLeft = elem.left +100;
-    newTop = elem.top +100;
+    newLeft = elem.left + 195;
+    newTop = elem.top +205;
   } else{
     newLeft = elem.left
     newTop = elem.top
   }
   let circle = new fabric.Circle({
     radius: 10,
-    fill: '#ff0000',
+    fill: '#00000',
     left: newLeft,
     top: newTop
   });
@@ -312,7 +326,8 @@ function dropElement(e) {
   });
   if(img.alt === 'building'){
     let circle = createNewCircle(img);
-    let group = new fabric.Group([img, circle],
+    circle.visible = false;
+    let group = new fabric.Group([circle, img],
         {
           originX: 'center',
           originY: 'center',
@@ -328,6 +343,8 @@ function dropElement(e) {
       mr: false,
       mt: false,
     });
+    group.minScaleLimit = 0.5
+    group.lockScalingFlip = true;
     group.name = 'houseGroup';
     canvas.add(group);
   } else if(img.alt === 'nature'){
@@ -414,52 +431,38 @@ const setEvent = (canvas) => {
     mousePressed = true;
     var evt = event.e;
     if(evt.altKey === true){
+      this.panning = true;
       this.lastPosX = evt.clientX;
       this.lastPosY = evt.clientY;
-      this.panning = true;
+
     }
   });
   canvas.on('mouse:wheel', (opt) => {
-    // For zoom-to-cursor
-
-
-    // ---------------
-    // Wheel speed/resolution adjustment
-    // ---------------
-    let delta = 0
-    let wheelDelta = opt.e.wheelDelta
-    let deltaY = opt.e.deltaY
-    // CHROME WIN/MAC | SAFARI 7 MAC | OPERA WIN/MAC | EDGE
-    if (wheelDelta) {
-      delta = -wheelDelta / 120
-    }
-    // FIREFOX WIN / MAC | IE
-    if(deltaY) {
-      deltaY > 0 ? delta = 1 : delta = -1
-    }
-
-    let pointer = canvas.getPointer(opt.e)
-    let zoom = canvas.getZoom() - delta / 10
-
-    // limit zoom in
-    if (zoom > 3) zoom = 3
-
-    // limit zoom out and reset canvas to dead-center
-    if (zoom < 0.3) {
-      zoom = 0.3
-      this.reset(canvas)
+    var delta = opt.e.deltaY;
+    var zoom = canvas.getZoom();
+    zoom *= 0.999 ** delta;
+    if (zoom > 4) zoom = 4;
+    if (zoom < 0.3) zoom = 0.3;
+    canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+    var vpt = this.viewportTransform;
+    if (zoom < 0.4) {
+      vpt[4] = 200 - 1000 * zoom / 2;
+      vpt[5] = 200 - 1000 * zoom / 2;
+    } else {
+      if (vpt[4] >= 0) {
+        vpt[4] = 0;
+      } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
+        vpt[4] = canvas.getWidth() - 1000 * zoom;
+      }
+      if (vpt[5] >= 0) {
+        vpt[5] = 0;
+      } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
+        vpt[5] = canvas.getHeight() - 1000 * zoom;
+      }
     }
 
-    canvas.zoomToPoint({
-      x: opt.e.offsetX,
-      y: opt.e.offsetY
-    }, zoom)
-
-    opt.e.preventDefault()
-    opt.e.stopPropagation()
-
-    canvas.renderAll()
-    canvas.calcOffset()
   });
 
 
@@ -583,27 +586,20 @@ let generateLineBetweenObjects = () => {
   let imageObjectsInCanvas = canvas.getObjects().filter(obj => obj.name === 'houseGroup');
   for (let i = 0; i < imageObjectsInCanvas.length; i++) {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
-      if ((imageObjectsInCanvas[i].item(0).alt === 'building' && imageObjectsInCanvas[j].item(0).alt === 'building') && (imageObjectsInCanvas[i].item(0) !== imageObjectsInCanvas[j].item(0))) {
-        distance = imageObjectsInCanvas[i].item(0).getCenterPoint().distanceFrom(imageObjectsInCanvas[j].item(0).getCenterPoint());
-
-        if (distance < 500) {
+      if ((imageObjectsInCanvas[i].item(1).alt === 'building' && imageObjectsInCanvas[j].item(1).alt === 'building') && (imageObjectsInCanvas[i].item(1) !== imageObjectsInCanvas[j].item(1))) {
+        distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
+        console.log(distance)
+        if (distance < 600) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
-          imageObjectsInCanvas[i].item(0).setCoords();
-          imageObjectsInCanvas[j].item(0).setCoords();
-          let pathWidth = (iScaleX, jScaleX) => {
-            if(iScaleX > jScaleX){
-              return 12 * 10**(iScaleX);
-            } else {
-              return 12 * 10**(jScaleX);
-            }
-          }
+          imageObjectsInCanvas[i].item(1).setCoords();
+          imageObjectsInCanvas[j].item(1).setCoords();
 
           //console.log(imageObjectsInCanvas[i].getPointByOrigin('center', 'top').x)
           line2 = new fabric.Path(
               'M -500 -500 Q 0 0 0 0 ',
               { fill: '',
                 stroke: new fabric.Pattern({source: pathBrushImg, repeat: 'no-repeat'}),
-                strokeWidth: 10,
+                strokeWidth:parseInt(penSlider.value, 10) || 1,
                 objectCaching: false,
                 id:'generatedLine',
                 selectable: false,
@@ -613,8 +609,8 @@ let generateLineBetweenObjects = () => {
                 lockMovementY: true,
               });
 
-          var matrix1Start = imageObjectsInCanvas[i].item(1).calcTransformMatrix();
-          var matrix2Start = imageObjectsInCanvas[j].item(1).calcTransformMatrix();
+          var matrix1Start = imageObjectsInCanvas[i].item(0).calcTransformMatrix();
+          var matrix2Start = imageObjectsInCanvas[j].item(0).calcTransformMatrix();
           var finalValues1 = fabric.util.qrDecompose(matrix1Start);
           var finalValues2 = fabric.util.qrDecompose(matrix2Start);
           line2.path[0][1] = finalValues1.translateX;
@@ -737,11 +733,10 @@ let generateImage = (obj) => {
 setEvent(canvas);
 
 let saveCanvasAsImg = () => {
-  canvas.setWidth(1000);
-  canvas.setHeight(1000);
   canvas.imageSmoothingEnabled = false;
+  placeBorder.visible = false ;
   let oldZoom = canvas.getZoom();
-
+  let oldviewport = canvas.viewportTransform;
   canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
   canvas.calcOffset();
 
@@ -765,13 +760,47 @@ let saveCanvasAsImg = () => {
   //     height: 2000
   //  });
   canvas.imageSmoothingEnabled = true;
-  canvas.setWidth(700);
-  canvas.setHeight(700);
+
+  canvas.setViewportTransform(oldviewport);
   canvas.calcOffset();
+  canvas.setZoom(oldZoom);
+  placeBorder.visible = true;
+
 }
 
 let getZIndex = (obj) => {
   return canvas.getObjects().indexOf(obj);
+}
+
+let changeBorderTool = (obj) => {
+  let drawer = document.getElementById('toolButtonSwitcherDrawn')
+  if(obj.id === "toolButtonSwitcherDrawn"){
+    if(canvas.isDrawingMode){
+      obj.style.borderColor = "#866138";
+    } else
+    {
+      obj.style.borderColor = "#ffb564";
+    }
+
+  } else if(obj.id === "toolButtonSwitcherFill"){
+      drawer.style.borderColor = "#ffb564";
+  }
+}
+
+let modal = document.getElementById('modalArea');
+let modalButton = document.getElementById('modalButton');
+let span = document.getElementsByClassName("close")[0];
+
+modalButton.onclick = function() {
+  modal.style.display = "block";
+}
+span.onclick = function() {
+  modal.style.display = "none";
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
 }
 
 // let gridCalculation = (grid) => {

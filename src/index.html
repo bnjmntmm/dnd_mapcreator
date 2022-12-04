@@ -10,65 +10,93 @@
 <div class="parent" id="parent">
 
   <div class="div1">
-    <div class="buttonLeftGroup">
-      <div class="leftDiv1">
-        <div class="slideContainer">
-          <input orient="vertical" type="range"  min="1" max="50" value="25" class="slider" id="penSlider">
+    <div id="modalArea" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Help Area</h2>
+      </div>
+        <div class="modal-body">
+          <p>1. You can draw on the canvas with the brush tool</p>
+          <p>2. You can fill the canvas with the bucket tool</p>
+          <p>3. You can delete objects with the bin tool</p>
+          <p>4. You can undo and redo your actions with the undo and redo tool</p>
+          <p>5. You can generate a line between two objects with the path tool</p>
+          <p>6. You can place a circle on the canvas with the numbers tool</p>
+          <p>7. You can save the canvas as an image with the save tool</p>
+          <p>8. You can change the color of the brush with the color picker</p>
+          <p>9. You can change the size of the brush and the path tool with the slider</p>
+        </div>
+        <div class="modal-footer">
+          <h3>Have fun!</h3>
         </div>
       </div>
 
+    </div>
+    <div class="buttonLeftGroup">
+      <div class="leftDiv1">
+        <div class="slideContainer">
+          <input orient="vertical" type="range"  min="10" max="50" value="30" class="slider" id="penSlider">
+        </div>
+
+      </div>
+
+
     <div class="leftDiv2">
+
       <div class="freeDrawingBrushes">
         <!--<button class="buttonDesign" onclick="togglePen(modes.draw, 'path')">Toggle path</button>-->
-        <button type="submit" id="togglePathID" class="buttonDesign" onclick="changeColorMode('path')">
+        <button type="submit" id="togglePathID" class="buttonDesignColorPicker" onclick="changeColorMode('path')">
           <img src="/assets/Icons/pathIcon.png" width="75" height="75" alt="submit" />
         </button>
 
         <!--<button class="buttonDesign" onclick="togglePen(modes.draw, 'grass')">Toggle grass</button>-->
-        <button type="submit" id="toggleGrassID" class="buttonDesign" onclick="changeColorMode('grass')">
+        <button type="submit" id="toggleGrassID" class="buttonDesignColorPicker" onclick="changeColorMode('grass')">
           <img src="/assets/Icons/grassIcon.png" width="75" height="75" alt="submit" />
         </button>
 
         <!--<button class="buttonDesign" onclick="togglePen(modes.draw, 'water')">Toggle water</button>-->
-        <button type="submit" id="toggleWaterID" class="buttonDesign" onclick="changeColorMode('water')">
+        <button type="submit" id="toggleWaterID" class="buttonDesignColorPicker" onclick="changeColorMode('water')">
           <img src="/assets/Icons/waterIcon.png" width="75" height="75" alt="submit" />
         </button>
       </div>
 
     </div>
     <div class="leftDiv3">
-      <div class="tools">
-        <button type="submit" class="buttonDesignFocusTool" onclick="toggleDrawing()" style="background-color: #1d2a0f;border: 5px solid #ffb564;">
+        <button type="submit" id="toolButtonSwitcherDrawn" class="toolButton" onclick="toggleDrawing(); changeBorderTool(this)" style="background-color: #1d2a0f;">
           <img src="/assets/Icons/brush.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="buttonDesignFocusTool" onclick="fillCanvas()" style="background-color: #595d2b;border: 5px solid #ffb564;">
+        <button type="submit" id="toolButtonSwitcherFill" class="toolButton" onclick="fillCanvas(); changeBorderTool(this)" style="background-color: #595d2b;">
           <img src="/assets/Icons/bucket.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="buttonDesign" onclick="deleteSelected(canvas.getActiveObject())" style="background-color: #1a3341;border: 5px solid #ffb564;">
+        <button type="submit" class="toolButton" onclick="deleteSelected(canvas.getActiveObject())" style="background-color: #1a3341;">
           <img src="/assets/Icons/bin.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="dobuttons" id="undo" onclick="replay(undo,redo,redoButton,undoButton)" style="background-color: #254252;border: 5px solid #ffb564;">
+        <button type="submit" class="toolButton" id="undo" onclick="replay(undo,redo,redoButton,undoButton)" style="background-color: #254252;">
           <img src="/assets/Icons/undo.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="dobuttons" id="redo" onclick="replay(redo,undo,undoButton,redoButton)" style="background-color: #325365;border: 5px solid #ffb564;">
+        <button type="submit" class="toolButton" id="redo" onclick="replay(redo,undo,undoButton,redoButton)" style="background-color: #325365;">
           <img src="/assets/Icons/redo.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="buttonDesign" onclick="generateLineBetweenObjects()" style="background-color: #496e83;border: 5px solid #ffb564;">
+        <button type="submit" class="toolButton" onclick="generateLineBetweenObjects()" style="background-color: #496e83;">
           <img src="/assets/Icons/distance.png" width="65" height="65" alt="submit" />
         </button>
-        <button class="dobuttons" onclick="placeCircle()" style="background-color: #5b8299;border: 5px solid #ffb564;">
+        <button class="toolButton" onclick="placeCircle()" style="background-color: #5b8299;">
           <img src="/assets/Icons/numbers.png" width="65" height="65" alt="submit" />
         </button>
-        <button type="submit" class="buttonDesign" onclick="saveCanvasAsImg()" style="background-color: #7da3b9;border: 5px solid #ffb564;">
+        <button type="submit" class="toolButton" onclick="saveCanvasAsImg()" style="background-color: #7da3b9;">
           <img src="/assets/Icons/save.png" width="65" height="65" alt="submit" />
         </button>
-    </div>
+        <button type="submit" id="modalButton" class="toolButton" style="background-color: #7da3b9;">
+          <img src="assets/icons/questionmark.png" width="65" height="65" alt="submit" />
+        </button>
+
 
     </div>
 </div>
     </div >
 <div class="div2" ondragover="allowDrop(event)" ondrop="dropElement(event)">
-  <canvas id="canvas" class="canvas" width="700px" height="700px"></canvas>
+  <canvas id="canvas" class="canvas"></canvas>
 </div>
 <div class="div3">
   <div class="buttonRightGroup">
