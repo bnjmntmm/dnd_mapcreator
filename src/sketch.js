@@ -366,6 +366,41 @@ function dropElement(e) {
     });
     group.name = 'natureGroup';
     canvas.add(group);
+  } else if(img.alt === 'cityobject'){
+    let group = new fabric.Group([img],
+        {
+          originX: 'center',
+          originY: 'center',
+
+          // snappedTo: false,
+          // snapID: null,
+
+        });
+    group.setControlsVisibility({
+      mb: false,
+      ml: false,
+      mr: false,
+      mt: false,
+    });
+    group.name = 'cityobjectGroup';
+    canvas.add(group);
+  } else if(img.alt === 'other'){
+    let group = new fabric.Group([img],
+        {
+          originX: 'center',
+          originY: 'center',
+          // snappedTo: false,
+          // snapID: null,
+
+        });
+    group.setControlsVisibility({
+      mb: false,
+      ml: false,
+      mr: false,
+      mt: false,
+    });
+    group.name = 'otherGroup';
+    canvas.add(group);
   }
 
 
@@ -672,28 +707,34 @@ var imgArrayNature = [
     img : '/assets/nature/tree4.png',id: "ele4", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone1.png',id: "ele5", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree5.png',id: "ele5", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone2.png',id: "ele6", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/tree6.png',id: "ele6", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone3.png',id: "ele7", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone1.png',id: "ele7", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone4.png',id: "ele8", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone2.png',id: "ele8", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/stone5.png',id: "ele9", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone3.png',id: "ele9", alt: 'nature', class:'img',draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton1.png',id: "ele10", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone4.png',id: "ele10", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton2.png',id: "ele11", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/stone5.png',id: "ele11", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-    img : '/assets/nature/skeleton3.png',id: "ele12", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img : '/assets/nature/skeleton1.png',id: "ele12", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/skeleton2.png',id: "ele13", alt:'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img : '/assets/nature/skeleton3.png',id: "ele14", alt: 'nature', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 
 ]
@@ -709,7 +750,115 @@ var imgArrayBuildings = [
   },
   {
     img : '/assets/buildings/shop1.png',id: "ele4",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/buildings/castle1.pmg',id: "ele5",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+  img: '/assets/buildings/church1.png',id: "ele6",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
+]
+var imgArrayCityObjects = [
+  {
+    img: '/assets/cityobjects/barn.png', id: "ele1", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/dock.png', id: "ele2", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/market.png', id: "ele3", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/market2.png', id: "ele4", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/market3.png', id: "ele5", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/tower2.png', id: "ele6", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/tower3.png', id: "ele7", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/tower5.png', id: "ele8", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/tower7.png', id: "ele9", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/cityobjects/well.png', id: "ele10", alt: 'cityobject', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  }
+]
+var imgArrayOther = [
+  {
+    img: '/assets/others/bank1.png', id: "ele1", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/barrel1.png', id: "ele2", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/barrel2.png', id: "ele3", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/boat1.png', id: "ele4", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/box1.png', id: "ele5", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/box2.png', id: "ele6", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/box3.png', id: "ele7", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire1.png', id: "ele8", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire2.png', id: "ele9", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire3.png', id: "ele10", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire4.png', id: "ele11", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire5.png', id: "ele12", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/fire6.png', id: "ele13", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/horse1.png', id: "ele14", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/horse2.png', id: "ele15", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/horse3.png', id: "ele16", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/paddle1.png', id: "ele17", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/straw.png', id: "ele18", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/tent1.png', id: "ele19", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/tent2.png', id: "ele20", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/tent3.png', id: "ele21", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    },
+  {
+    img: '/assets/others/tent4.png', id: "ele22", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  }
+
+
 ]
 
 let generateImage = (obj) => {
@@ -725,6 +874,18 @@ let generateImage = (obj) => {
     for(var i = 0; i < imgArrayBuildings.length; i++){
       var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
       htmlOutput += imageElement.replace("#SRC", imgArrayBuildings[i].img).replace("#ALT", imgArrayBuildings[i].alt).replace("#ID", imgArrayBuildings[i].id).replace("#CLASS", imgArrayBuildings[i].class).replace("#DRAGGABLE", imgArrayBuildings[i].draggable).replace("#ONDRAGSTART", imgArrayBuildings[i].ondragstart);
+    }
+    div.innerHTML = htmlOutput;
+  } else if(obj === selectedObject.cityObject){
+    for(var i = 0; i < imgArrayCityObjects.length; i++){
+      var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
+      htmlOutput += imageElement.replace("#SRC", imgArrayCityObjects[i].img).replace("#ALT", imgArrayCityObjects[i].alt).replace("#ID", imgArrayCityObjects[i].id).replace("#CLASS", imgArrayCityObjects[i].class).replace("#DRAGGABLE", imgArrayCityObjects[i].draggable).replace("#ONDRAGSTART", imgArrayCityObjects[i].ondragstart);
+  }
+    div.innerHTML = htmlOutput;
+  } else if(obj === selectedObject.other){
+    for(var i = 0; i < imgArrayOther.length; i++){
+      var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
+      htmlOutput += imageElement.replace('#SRC', imgArrayOther[i].img).replace('#ALT', imgArrayOther[i].alt).replace('#ID', imgArrayOther[i].id).replace('#CLASS', imgArrayOther[i].class).replace('#DRAGGABLE', imgArrayOther[i].draggable).replace('#ONDRAGSTART', imgArrayOther[i].ondragstart);
     }
     div.innerHTML = htmlOutput;
   }
