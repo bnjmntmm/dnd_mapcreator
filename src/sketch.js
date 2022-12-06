@@ -294,6 +294,14 @@ let createNewCircle = (elem) => {
 
 }
 let placesList = document.getElementById('placedObjectList');
+function getMouseCoords(event)
+{
+  var pointer = canvas.getPointer(event.e);
+  var posX = pointer.x;
+  var posY = pointer.y;
+  console.log(posX+", "+posY);    // Log to console
+}
+
 
 function dropElement(e) {
 
@@ -331,8 +339,8 @@ function dropElement(e) {
         {
           originX: 'center',
           originY: 'center',
-          left: img.left,
-          top: img.top,
+          left: canvas.getPointer(e).x,
+          top: canvas.getPointer(e).y,
           // snappedTo: false,
           // snapID: null,
 
@@ -352,8 +360,8 @@ function dropElement(e) {
         {
           originX: 'center',
           originY: 'center',
-          left: img.left,
-          top: img.top,
+          left: canvas.getPointer(e).x,
+          top: canvas.getPointer(e).y,
           // snappedTo: false,
           // snapID: null,
 
@@ -371,7 +379,8 @@ function dropElement(e) {
         {
           originX: 'center',
           originY: 'center',
-
+          left: canvas.getPointer(e).x,
+          top: canvas.getPointer(e).y,
           // snappedTo: false,
           // snapID: null,
 
@@ -389,6 +398,8 @@ function dropElement(e) {
         {
           originX: 'center',
           originY: 'center',
+          left: canvas.getPointer(e).x,
+          top: canvas.getPointer(e).y,
           // snappedTo: false,
           // snapID: null,
 
