@@ -211,7 +211,7 @@ const changeSelectableCategory = (object) => {
 //Brushs
 var grassBrushImg = new Image();
 grassBrushImg.objectCaching = false;
-grassBrushImg.src = '/assets/tiles/grass03.png';
+grassBrushImg.src = '/assets/tiles/grass04.png';
 grassBrushImg.alt = 'grassBrush';
 var grassPatternBrush = new fabric.PatternBrush(canvas);
 grassPatternBrush.source = grassBrushImg;
@@ -444,6 +444,28 @@ function dropElement(e) {
     group.name = 'cityobjectGroup';
     canvas.add(group);
     save();
+  } else if(img.alt ='barrier') {
+    let circle = createNewCircle(img);
+    circle.visible = false;
+    let group = new fabric.Group([circle,img],
+        {
+          originX: 'center',
+          originY: 'center',
+          left: canvas.getPointer(e).x,
+          top: canvas.getPointer(e).y,
+          // snappedTo: false,
+          // snapID: null,
+
+        });
+    group.setControlsVisibility({
+      mb: false,
+      ml: false,
+      mr: false,
+      mt: false,
+    });
+    group.name = 'barrierGroup';
+    canvas.add(group);
+    save();
   } else if(img.alt === 'other'){
     let circle = createNewCircle(img);
     circle.visible = false;
@@ -472,7 +494,8 @@ function dropElement(e) {
   // let listItem = document.createElement('li');
   // listItem.innerText = img.alt;
   // placesList.appendChild(listItem);
-
+  canvas.renderAll();
+  sortingAlgorithm();
 }
 
 
@@ -661,6 +684,11 @@ let sortingAlgorithm = () => {
       }
     } else if(canvas.item(i).name === 'houseGroup'){
       while(i>0 && canvas.item(i-1).id === 'numberedCircle'){
+        canvas.moveTo(canvas.item(i), i-1)
+        i = i-1;
+      }
+    } else if(canvas.item(i).name === 'barrierGroup'){
+      while(i>0 && canvas.item(i-1).name === 'houseGroup'){
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
@@ -924,7 +952,31 @@ var imgArrayOther = [
   },
   {
     img: '/assets/others/tent4.png', id: "ele22", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/others/mosaic.png', id: "ele23", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
+]
+var imgArrayBarriers = [
+  {
+    img: '/assets/barriers/wood_barrier_post.png', id: "ele1", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/barriers/wood_barrier_one.png', id: "ele2", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/barriers/wood_barrier_three.png', id: "ele3", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/barriers/stone_barrier_post.png', id: "ele4", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/barriers/stone_barrier_one.png', id: "ele5", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  },
+  {
+    img: '/assets/barriers/stone_barrier_three.png', id: "ele6", alt: 'barrier', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+  }
+
 
 
 ]
@@ -954,6 +1006,12 @@ let generateImage = (obj) => {
     for(var i = 0; i < imgArrayOther.length; i++){
       var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
       htmlOutput += imageElement.replace('#SRC', imgArrayOther[i].img).replace('#ALT', imgArrayOther[i].alt).replace('#ID', imgArrayOther[i].id).replace('#CLASS', imgArrayOther[i].class).replace('#DRAGGABLE', imgArrayOther[i].draggable).replace('#ONDRAGSTART', imgArrayOther[i].ondragstart);
+    }
+    div.innerHTML = htmlOutput;
+  } else if(obj === selectedObject.barriers){
+    for(var i = 0; i < imgArrayBarriers.length; i++){
+      var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
+      htmlOutput += imageElement.replace('#SRC', imgArrayBarriers[i].img).replace('#ALT', imgArrayBarriers[i].alt).replace('#ID', imgArrayBarriers[i].id).replace('#CLASS', imgArrayBarriers[i].class).replace('#DRAGGABLE', imgArrayBarriers[i].draggable).replace('#ONDRAGSTART', imgArrayBarriers[i].ondragstart);
     }
     div.innerHTML = htmlOutput;
   }
