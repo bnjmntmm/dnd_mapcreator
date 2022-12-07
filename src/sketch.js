@@ -78,19 +78,60 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
   on.disabled = true;
   off.disabled = true;
   canvas.clear()
-  canvas.loadFromJSON(state, function(){
+  canvas.loadFromJSON(state, canvas.renderAll.bind(canvas), function(){
     let objects = canvas.getObjects();
     for(let i = 0; i < objects.length; i++){
-      if(objects[i].type === 'image' ) {
-        let imagePathArray = objects[i].src.split('/');
-        if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
-          objects[i].setControlsVisibility({
-            mb: false,
-            ml: false,
-            mr: false,
-            mt: false,
-          });
-          objects[i].alt = 'building';
+      if(objects[i].type === 'group' ) {
+        if(objects[i].item(1).type === 'image'){
+          let imagePathArray = objects[i].item(1).src.split('/');
+          if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
+            objects[i].setControlsVisibility({
+              mb: false,
+              ml: false,
+              mr: false,
+              mt: false,
+            });
+            objects[i].name = 'houseGroup';
+            objects[i].minScaleLimit = 0.5
+            objects[i].lockScalingFlip = true;
+            objects[i].item(1).alt = 'building';
+          } else if (imagePathArray[imagePathArray.length - 2] === 'nature') {
+            objects[i].setControlsVisibility({
+              mb: false,
+              ml: false,
+              mr: false,
+              mt: false,
+            });
+            objects[i].name = 'natureGroup';
+            objects[i].item(1).alt = 'nature';
+          } else if (imagePathArray[imagePathArray.length - 2] === 'barriers') {
+            objects[i].setControlsVisibility({
+              mb: false,
+              ml: false,
+              mr: false,
+              mt: false,
+            });
+            objects[i].name = 'barriersGroup';
+            objects[i].item(1).alt = 'barriers';
+          } else if (imagePathArray[imagePathArray.length - 2] === 'cityObjects') {
+            objects[i].setControlsVisibility({
+              mb: false,
+              ml: false,
+              mr: false,
+              mt: false,
+            });
+            objects[i].name = 'cityObjectsGroup';
+            objects[i].item(1).alt = 'cityObjects';
+          } else if (imagePathArray[imagePathArray.length - 2] === 'other') {
+            objects[i].setControlsVisibility({
+              mb: false,
+              ml: false,
+              mr: false,
+              mt: false,
+            });
+            objects[i].name = 'otherGroup';
+            objects[i].item(1).alt = 'other';
+          }
         }
       }
       else if(objects[i].type = 'path' && objects[i].strokeLineCap === 'butt'){
@@ -199,19 +240,19 @@ penSlider.onchange = function() {
 
 let currentBrush;
 let changeColorMode = (activeBrush) => {
-    if(activeBrush === 'grass') {
-      currentBrush = 'grass';
-      canvas.freeDrawingBrush = grassPatternBrush;
-      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-    } else if(activeBrush === 'path') {
-      currentBrush = 'path';
-      canvas.freeDrawingBrush = pathPatternBrush;
-      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-    } else if(activeBrush === 'water'){
-      currentBrush = 'water';
-      canvas.freeDrawingBrush = waterPatternBrush;
-      canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
-    }
+  if(activeBrush === 'grass') {
+    currentBrush = 'grass';
+    canvas.freeDrawingBrush = grassPatternBrush;
+    canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+  } else if(activeBrush === 'path') {
+    currentBrush = 'path';
+    canvas.freeDrawingBrush = pathPatternBrush;
+    canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+  } else if(activeBrush === 'water'){
+    currentBrush = 'water';
+    canvas.freeDrawingBrush = waterPatternBrush;
+    canvas.freeDrawingBrush.width = parseInt(penSlider.value, 10) || 1;
+  }
 }
 let toggleDrawing = () => {
   if(currentBrush == undefined){
@@ -269,14 +310,14 @@ let createNewCircle = (elem) => {
   let newTop;
   let elemName = elem.getSrc().split('/')[5];
   if(elemName === 'house1.png'){
-    newLeft = elem.left +27;
+    newLeft = elem.left +35;
     newTop = elem.top +40;
   } else if(elemName === 'house2.png'){
-    newLeft = elem.left +27;
+    newLeft = elem.left +35;
     newTop = elem.top +40;
   } else if(elemName === 'house3.png'){
-     newLeft = elem.left+70;
-     newTop = elem.top+175;
+    newLeft = elem.left+70;
+    newTop = elem.top+175;
   } else if(elemName === 'shop1.png'){
     newLeft = elem.left + 195;
     newTop = elem.top +205;
@@ -299,7 +340,6 @@ function getMouseCoords(event)
   var pointer = canvas.getPointer(event.e);
   var posX = pointer.x;
   var posY = pointer.y;
-  console.log(posX+", "+posY);    // Log to console
 }
 
 
@@ -355,8 +395,11 @@ function dropElement(e) {
     group.lockScalingFlip = true;
     group.name = 'houseGroup';
     canvas.add(group);
+    save();
   } else if(img.alt === 'nature'){
-    let group = new fabric.Group([img],
+    let circle = createNewCircle(img);
+    circle.visible = false;
+    let group = new fabric.Group([circle,img],
         {
           originX: 'center',
           originY: 'center',
@@ -374,8 +417,11 @@ function dropElement(e) {
     });
     group.name = 'natureGroup';
     canvas.add(group);
+    save();
   } else if(img.alt === 'cityobject'){
-    let group = new fabric.Group([img],
+    let circle = createNewCircle(img);
+    circle.visible = false;
+    let group = new fabric.Group([circle,img],
         {
           originX: 'center',
           originY: 'center',
@@ -393,8 +439,11 @@ function dropElement(e) {
     });
     group.name = 'cityobjectGroup';
     canvas.add(group);
+    save();
   } else if(img.alt === 'other'){
-    let group = new fabric.Group([img],
+    let circle = createNewCircle(img);
+    circle.visible = false;
+    let group = new fabric.Group([circle,img],
         {
           originX: 'center',
           originY: 'center',
@@ -412,13 +461,14 @@ function dropElement(e) {
     });
     group.name = 'otherGroup';
     canvas.add(group);
+    save();
   }
 
 
   // let listItem = document.createElement('li');
   // listItem.innerText = img.alt;
   // placesList.appendChild(listItem);
-  save();
+
 }
 
 
@@ -546,7 +596,6 @@ const setEvent = (canvas) => {
     save();
   });
   canvas.on('object:added', function (obj){
-    //save();
   });
 
   // canvas.on('object:rotating', function (obj){
@@ -602,7 +651,7 @@ const setEvent = (canvas) => {
 let sortingAlgorithm = () => {
   for(var i = 0; i < canvas.getObjects().length; i++){
     if(canvas.item(i).type === 'path' || canvas.item(i).id === 'generatedLine'){
-      while(i>0 && (canvas.item(i-1).name === 'houseGroup' || canvas.item(i-1).id === 'numberedCircle' || canvas.item(i-1).name === 'natureGroup')){
+      while(i>0 && (canvas.item(i-1).name === 'houseGroup' || canvas.item(i-1).id === 'numberedCircle' || canvas.item(i-1).name === 'natureGroup' || canvas.item(i-1).name === "otherGroup" || canvas.item(i-1) === "cityobjectGroup" || canvas.item(i-1) === "barrierGroup") ){
         canvas.moveTo(canvas.item(i), i-1)
         i = i-1;
       }
@@ -634,7 +683,6 @@ let generateLineBetweenObjects = () => {
     for (let j = i+1; j < imageObjectsInCanvas.length; j++) {
       if ((imageObjectsInCanvas[i].item(1).alt === 'building' && imageObjectsInCanvas[j].item(1).alt === 'building') && (imageObjectsInCanvas[i].item(1) !== imageObjectsInCanvas[j].item(1))) {
         distance = imageObjectsInCanvas[i].getCenterPoint().distanceFrom(imageObjectsInCanvas[j].getCenterPoint());
-        console.log(distance)
         if (distance < 600) {
           //Line gets generated between the two objects from path -> looks better, also random curvature | randomaly doesn't generate fully
           imageObjectsInCanvas[i].item(1).setCoords();
@@ -766,7 +814,7 @@ var imgArrayBuildings = [
     img: '/assets/buildings/castle1.pmg',id: "ele5",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   },
   {
-  img: '/assets/buildings/church1.png',id: "ele6",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
+    img: '/assets/buildings/church1.png',id: "ele6",  alt: 'building', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
 ]
 var imgArrayCityObjects = [
@@ -864,7 +912,7 @@ var imgArrayOther = [
   },
   {
     img: '/assets/others/tent3.png', id: "ele21", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
-    },
+  },
   {
     img: '/assets/others/tent4.png', id: "ele22", alt: 'other', class:'img', draggable: "true" ,ondragstart: "dragElement(event)"
   }
@@ -891,7 +939,7 @@ let generateImage = (obj) => {
     for(var i = 0; i < imgArrayCityObjects.length; i++){
       var imageElement = '<img src="#SRC", alt="#ALT", id="#ID", class="#CLASS", draggable="#DRAGGABLE", ondragstart="#ONDRAGSTART" />';
       htmlOutput += imageElement.replace("#SRC", imgArrayCityObjects[i].img).replace("#ALT", imgArrayCityObjects[i].alt).replace("#ID", imgArrayCityObjects[i].id).replace("#CLASS", imgArrayCityObjects[i].class).replace("#DRAGGABLE", imgArrayCityObjects[i].draggable).replace("#ONDRAGSTART", imgArrayCityObjects[i].ondragstart);
-  }
+    }
     div.innerHTML = htmlOutput;
   } else if(obj === selectedObject.other){
     for(var i = 0; i < imgArrayOther.length; i++){
@@ -955,7 +1003,7 @@ let changeBorderTool = (obj) => {
     }
 
   } else if(obj.id === "toolButtonSwitcherFill"){
-      drawer.style.borderColor = "#ffb564";
+    drawer.style.borderColor = "#ffb564";
   }
 }
 
@@ -986,4 +1034,3 @@ window.onclick = function(event) {
 //   }
 // }
 // gridCalculation(20);
-
