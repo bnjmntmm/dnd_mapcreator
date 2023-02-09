@@ -32,7 +32,7 @@ let changeToGayMode = () => {
 //fabric.maxCacheSideLimit = 11000;
 var webglBackend = new fabric.WebglFilterBackend();
 fabric.filterBackend = webglBackend;
-var canvas = new fabric.Canvas('canvas', {
+const canvas = new fabric.Canvas('canvas', {
   backgroundColor: '#ffcf9d',
   width: 1000,
   height: 1000,
@@ -51,8 +51,8 @@ c.style.width = upperCanvas.style.width = container.style.width = width;
 c.style.height = upperCanvas.style.height = container.style.height = height;
 
 
-var placeBorder = new fabric.Rect({width: 995, height: 995, stroke:'#161c2c', strokeWidth: 10, fill: 'transparent', selectable: false});
-canvas.add(placeBorder);
+// var placeBorder = new fabric.Rect({width: 995, height: 995,name: "borderRect", stroke:'#161c2c', strokeWidth: 10, fill: 'transparent', selectable: false});
+// canvas.add(placeBorder);
 
 let undoButton = document.getElementById('undo');
 let redoButton = document.getElementById('redo');
@@ -80,9 +80,9 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
   canvas.clear()
   canvas.loadFromJSON(state, canvas.renderAll.bind(canvas), function(){
     let objects = canvas.getObjects();
-    for(let i = 0; i < objects.length; i++){
-      if(objects[i].type === 'group' ) {
-        if(objects[i].item(1).type === 'image'){
+    for(let i = 0; i < objects.length; i++) {
+     if (objects[i].type === 'group') {
+        if (objects[i].item(1).type === 'image') {
           let imagePathArray = objects[i].item(1).src.split('/');
           if (imagePathArray[imagePathArray.length - 2] === 'buildings') {
             objects[i].setControlsVisibility({
@@ -133,8 +133,7 @@ function replay(playStack,saveStack, buttonsOn, buttonsOff){
             objects[i].item(1).alt = 'other';
           }
         }
-      }
-      else if(objects[i].type = 'path' && objects[i].strokeLineCap === 'butt'){
+      } else if (objects[i].type === 'path' && objects[i].strokeLineCap === 'butt') {
 
         objects[i].selectable = false;
         objects[i].hoverCursor = 'url(/assets/icons/cursor/cursorgay.gif)';
@@ -1021,7 +1020,7 @@ setEvent(canvas);
 
 let saveCanvasAsImg = () => {
   canvas.imageSmoothingEnabled = false;
-  placeBorder.visible = false ;
+  // placeBorder.visible = false ;
   let oldZoom = canvas.getZoom();
   let oldviewport = canvas.viewportTransform;
   canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
@@ -1051,7 +1050,7 @@ let saveCanvasAsImg = () => {
   canvas.setViewportTransform(oldviewport);
   canvas.calcOffset();
   canvas.setZoom(oldZoom);
-  placeBorder.visible = true;
+  // placeBorder.visible = true;
 
 }
 
